@@ -55,7 +55,9 @@ export class AppPreferencesService {
   }
 
   private applyTheme(theme: AppTheme): void {
-    document.body.classList.toggle('theme-dark', theme === 'dark');
+    const isDark = theme === 'dark';
+    document.body.classList.toggle('theme-dark', isDark);
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
   }
 
   private applyLanguage(lang: AppLanguage): void {

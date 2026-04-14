@@ -73,56 +73,6 @@ body.theme-dark app-root .app-toolbar__action:hover {
   background: #4a4a52;
 }
 
-body.theme-dark app-node-editor .layout {
-  background: #212121;
-}
-
-body.theme-dark app-node-editor .layout__tabs {
-  background: #262626;
-  border-bottom-color: rgba(255, 255, 255, 0.08);
-}
-
-body.theme-dark app-node-editor .layout__tab {
-  color: #cbd5e1;
-}
-
-body.theme-dark app-node-editor .layout__tab:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #f1f5f9;
-}
-
-body.theme-dark app-node-editor .layout__tab--active {
-  color: #e8eaf6;
-  border-bottom-color: #9fa8da;
-}
-
-body.theme-dark app-node-editor .layout__properties-sidenav {
-  background: linear-gradient(180deg, #2a2a2a 0%, #262626 40%);
-  border-left-color: rgba(255, 255, 255, 0.08);
-}
-
-body.theme-dark app-node-editor .layout__properties {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-body.theme-dark app-node-editor .layout__properties .mat-mdc-form-field {
-  --mdc-outlined-text-field-label-text-color: rgba(255, 255, 255, 0.65);
-  --mdc-outlined-text-field-input-text-color: #f1f5f9;
-  --mdc-outlined-text-field-outline-color: rgba(255, 255, 255, 0.28);
-  --mdc-outlined-text-field-hover-outline-color: rgba(255, 255, 255, 0.35);
-  --mdc-outlined-text-field-focus-outline-color: #9fa8da;
-  --mat-select-enabled-arrow-color: rgba(255, 255, 255, 0.45);
-  --mat-select-disabled-arrow-color: rgba(255, 255, 255, 0.45);
-  --mat-select-enabled-trigger-text-color: #f1f5f9;
-  --mat-select-disabled-trigger-text-color: rgba(255, 255, 255, 0.52);
-}
-
-body.theme-dark app-node-editor .props-mat-card {
-  background: #333 !important;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.87);
-}
-
 body.theme-dark .cdk-overlay-container .mat-mdc-select-panel {
   background: #424242;
 }

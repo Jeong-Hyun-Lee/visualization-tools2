@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
 
-import { NodeEditorComponent } from './node-editor/node-editor.component';
+import { DiagramWrapperComponent } from './example/diagram-wrapper.component';
 
 export const appRoutes: Routes = [
-  { path: '', pathMatch: 'full', component: NodeEditorComponent },
-  { path: 'editor', component: NodeEditorComponent },
+  { path: '', pathMatch: 'full', component: DiagramWrapperComponent },
+  { path: 'example', component: DiagramWrapperComponent },
   { path: '**', redirectTo: '' },
 ];
