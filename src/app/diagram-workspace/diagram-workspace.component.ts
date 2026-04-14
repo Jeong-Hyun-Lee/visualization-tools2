@@ -6,26 +6,21 @@ import {
   DestroyRef,
   ElementRef,
   EventEmitter,
-  HostListener,
   Input,
   OnChanges,
   Output,
   SimpleChanges,
-  ViewChild,
   inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   NgDiagramBackgroundComponent,
   NgDiagramComponent,
   NgDiagramModelService,
   NgDiagramMinimapComponent,
-  NgDiagramSelectionService,
   NgDiagramViewportService,
   initializeModel,
   provideNgDiagram,
@@ -34,22 +29,7 @@ import {
   type Node,
 } from 'ng-diagram';
 
-import { parseSldImportPayload } from '../node-editor/sld-import-payload';
 import { SldIoMessageService } from '../sld-io-message/sld-io-message.service';
-
-type SaveFilePickerFn = (options?: {
-  suggestedName?: string;
-  types?: Array<{ description?: string; accept: Record<string, string[]> }>;
-}) => Promise<FileSystemSaveHandle>;
-
-interface FileSystemSaveHandle {
-  createWritable(): Promise<FileSystemWritableLike>;
-}
-
-interface FileSystemWritableLike {
-  write(data: Blob): Promise<void>;
-  close(): Promise<void>;
-}
 
 type SerializedCell = {
   id: string;
@@ -76,9 +56,7 @@ type SerializedCell = {
   imports: [
     TranslateModule,
     MatToolbarModule,
-    MatButtonModule,
     MatIconModule,
-    MatTooltipModule,
     NgDiagramComponent,
     NgDiagramBackgroundComponent,
     NgDiagramMinimapComponent,
@@ -94,14 +72,6 @@ export class DiagramWorkspaceComponent implements AfterViewInit, OnChanges {
   @Output() readonly pendingImportConsumed = new EventEmitter<{
     diagramId: string;
   }>();
-  @Output() readonly importToNewTab = new EventEmitter<{
-    fileName: string;
-    cells: object[];
-  }>();
-  @Output() readonly saveSessionRequested = new EventEmitter<void>();
-
-  @ViewChild('importFileInput', { static: true })
-  importFileInput!: ElementRef<HTMLInputElement>;
 
   readonly model: ModelAdapter = initializeModel({
     nodes: [],
@@ -128,12 +98,10 @@ export class DiagramWorkspaceComponent implements AfterViewInit, OnChanges {
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly modelService = inject(NgDiagramModelService);
-  private readonly selectionService = inject(NgDiagramSelectionService);
   private readonly viewportService = inject(NgDiagramViewportService);
 
   constructor(
     private readonly cdr: ChangeDetectorRef,
-    private readonly hostRef: ElementRef<HTMLElement>,
     private readonly sldIoMessage: SldIoMessageService,
     private readonly translate: TranslateService,
   ) {}
@@ -152,76 +120,6 @@ export class DiagramWorkspaceComponent implements AfterViewInit, OnChanges {
     }
   }
 
-  @HostListener('document:keydown', ['$event'])
-  onDocKeydown(ev: KeyboardEvent): void {
-    const target = ev.target as HTMLElement | null;
-    const inEditable =
-      target != null &&
-      (target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.getAttribute('contenteditable') === 'true');
-
-    if ((ev.ctrlKey || ev.metaKey) && !ev.altKey && ev.code === 'KeyE') {
-      if (inEditable || !this.isActiveWorkspaceTab()) {
-        return;
-      }
-      ev.preventDefault();
-      this.exportDiagram();
-      return;
-    }
-
-    if ((ev.ctrlKey || ev.metaKey) && !ev.shiftKey && !ev.altKey && ev.code === 'KeyS') {
-      if (inEditable || !this.isActiveWorkspaceTab()) {
-        return;
-      }
-      ev.preventDefault();
-      this.saveSessionRequested.emit();
-      return;
-    }
-  }
-
-  private isActiveWorkspaceTab(): boolean {
-    return !this.hostRef.nativeElement.classList.contains(
-      'layout__workspace-item--hidden',
-    );
-  }
-
-  zoomToFit(): void {
-    this.viewportService.zoomToFit({ padding: 24 });
-  }
-
-  undo(): void {
-    this.model.undo();
-    this.cdr.markForCheck();
-  }
-
-  redo(): void {
-    this.model.redo();
-    this.cdr.markForCheck();
-  }
-
-  canUndo(): boolean {
-    return true;
-  }
-
-  canRedo(): boolean {
-    return true;
-  }
-
-  canDeleteSelection(): boolean {
-    const selection = this.selectionService.selection();
-    return selection.nodes.length > 0 || selection.edges.length > 0;
-  }
-
-  deleteSelected(): void {
-    this.selectionService.deleteSelection();
-    this.cdr.markForCheck();
-  }
-
-  exportDiagram(): void {
-    void this.exportDiagramAsync();
-  }
-
   /** 저장용: exportDiagram과 동일한 export JSON payload를 graph 상태에서 생성합니다. */
   getExportPayload(): {
     format: 'ge-vernova-sld';
@@ -236,119 +134,6 @@ export class DiagramWorkspaceComponent implements AfterViewInit, OnChanges {
       exportedAt: new Date().toISOString(),
       graph,
     };
-  }
-
-  private async exportDiagramAsync(): Promise<void> {
-    const graph = { cells: this.serializeCells() };
-    const payload = {
-      format: 'ge-vernova-sld',
-      version: 1,
-      exportedAt: new Date().toISOString(),
-      graph,
-    };
-    const json = JSON.stringify(payload, null, 2);
-    const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
-    const filename = `sld-${stamp}.json`;
-
-    const picker = (
-      window as Window & { showSaveFilePicker?: SaveFilePickerFn }
-    ).showSaveFilePicker?.bind(window);
-    if (picker != null && window.isSecureContext) {
-      try {
-        const handle = await picker({
-          suggestedName: filename,
-          types: [
-            {
-              description: 'JSON',
-              accept: { 'application/json': ['.json'] },
-            },
-          ],
-        });
-        const writable = await (
-          handle as FileSystemSaveHandle
-        ).createWritable();
-        await writable.write(
-          new Blob([json], { type: 'application/json;charset=utf-8' }),
-        );
-        await writable.close();
-        this.sldIoMessage.showIoMessage(
-          this.translate.instant('messages.exportSaved'),
-        );
-        this.cdr.markForCheck();
-      } catch (err) {
-        if (err instanceof DOMException && err.name === 'AbortError') {
-          return;
-        }
-        const detail = err instanceof Error ? err.message : String(err);
-        console.error('SLD export failed', err);
-        this.sldIoMessage.showIoMessage(
-          this.translate.instant('messages.exportFailed', { detail }),
-          { variant: 'error' },
-        );
-        this.cdr.markForCheck();
-      }
-      return;
-    }
-
-    const blob = new Blob([json], {
-      type: 'application/json;charset=utf-8',
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.rel = 'noopener';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-    this.sldIoMessage.showIoMessage(
-      this.translate.instant('messages.downloadStarted'),
-    );
-    this.cdr.markForCheck();
-  }
-
-  openImportFilePicker(): void {
-    const input = this.importFileInput?.nativeElement;
-    if (!input) {
-      return;
-    }
-    input.value = '';
-    input.click();
-  }
-
-  onImportFileSelected(ev: Event): void {
-    const input = ev.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) {
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const raw = reader.result as string;
-        const text = raw.replace(/^\uFEFF/, '');
-        const parsed = JSON.parse(text) as unknown;
-        const { cells } = parseSldImportPayload(parsed);
-        this.importToNewTab.emit({ fileName: file.name, cells });
-      } catch (err) {
-        const detail = err instanceof Error ? err.message : String(err);
-        console.error('SLD import failed', err);
-        this.sldIoMessage.showIoMessage(
-          this.translate.instant('messages.importFailed', { detail }),
-          { variant: 'error' },
-        );
-      }
-      this.cdr.markForCheck();
-    };
-    reader.onerror = () => {
-      this.sldIoMessage.showIoMessage(
-        this.translate.instant('messages.fileReadError'),
-        { variant: 'error' },
-      );
-      this.cdr.markForCheck();
-    };
-    reader.readAsText(file, 'utf-8');
   }
 
   private tryConsumePendingImport(): void {

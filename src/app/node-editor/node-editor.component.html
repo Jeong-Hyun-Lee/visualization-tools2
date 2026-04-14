@@ -43,8 +43,6 @@
         [diagramName]="diagram.name"
         [pendingImportCells]="pendingCellsForDiagram(diagram.id)"
         (pendingImportConsumed)="onPendingImportConsumed($event)"
-        (importToNewTab)="onImportToNewTab($event)"
-        (saveSessionRequested)="saveAllTabsToIndexDB()"
         [class.layout__workspace-item--hidden]="diagram.id !== activeDiagramId()"
       ></app-diagram-workspace>
     }

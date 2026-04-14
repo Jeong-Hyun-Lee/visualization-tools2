@@ -47,45 +47,6 @@
   flex: 1 1 auto;
 }
 
-.workspace__topbar-actions {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 0.5rem;
-}
-
-.workspace__topbar-actions button mat-icon {
-  margin-right: 0.25rem;
-  vertical-align: middle;
-}
-
-.workspace__action-btn {
-  border-radius: 10px;
-  padding: 0 0.75rem;
-  min-width: 88px;
-  height: 36px;
-  font-weight: 500;
-  color: #0f172a;
-  background: #eef2ff;
-  border: 1px solid #dbe3ff;
-}
-
-.workspace__action-btn:hover {
-  background: #e0e7ff;
-}
-
-.workspace__action-btn--danger {
-  color: #b91c1c;
-  background: #fef2f2;
-  border-color: #fecaca;
-}
-.workspace__action-btn--danger:disabled {
-  border: 1px solid #dbe3ff;
-}
-
-.workspace__action-btn--danger:hover {
-  background: #fee2e2;
-}
-
 .workspace__body {
   display: flex;
   flex: 1;
