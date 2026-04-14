@@ -8,16 +8,6 @@
   <div class="app-toolbar__actions">
     <button
       mat-flat-button
-      class="app-toolbar__action app-toolbar__action--new-diagram"
-      type="button"
-      [matTooltip]="'app.newDiagramTooltip' | translate"
-      (click)="onRequestNewDiagram()"
-    >
-      <mat-icon>add</mat-icon>
-      {{ "app.newDiagram" | translate }}
-    </button>
-    <button
-      mat-flat-button
       class="app-toolbar__action"
       type="button"
       [matMenuTriggerFor]="settingsMenu"
@@ -92,19 +82,20 @@
     aria-label="새 다이어그램 추가"
     (click)="onAddPage()"
   >
-    +
+    <mat-icon>add</mat-icon>
   </button>
   <div class="app-pagebar__tabs">
-    @for (page of pages; track page; let idx = $index) {
-      <button
-        type="button"
-        class="app-pagebar__tab"
-        [class.app-pagebar__tab--active]="activePageIndex === idx"
-        (click)="onSelectPage(idx)"
-      >
-        {{ page }}
-      </button>
-    }
+    <mat-tab-group
+      [selectedIndex]="activePageIndex()"
+      (selectedIndexChange)="onSelectPage($event)"
+      animationDuration="0ms"
+      mat-stretch-tabs="false"
+      class="app-pagebar__tab-group"
+    >
+      @for (page of pages(); track page.id) {
+        <mat-tab [label]="page.name"></mat-tab>
+      }
+    </mat-tab-group>
   </div>
 </div>
 

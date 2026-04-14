@@ -1,14 +1,12 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
   HostListener,
-  OnInit,
   computed,
+  effect,
   inject,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import type { Model, NgDiagramConfig, Node, NgDiagramPaletteItem } from 'ng-diagram';
 import {
   initializeModelAdapter,
@@ -21,8 +19,7 @@ import {
   NgDiagramService,
   NgDiagramViewportService,
 } from 'ng-diagram';
-import { DiagramDocumentService } from '../diagram-document.service';
-import { NewDiagramRequestService } from '../new-diagram-request.service';
+import { DiagramPagesService } from '../diagram-pages.service';
 import { LocalStorageModelAdapter } from './local-storage-model-adapter';
 
 type DemoNodeData = {
@@ -42,15 +39,13 @@ type DemoNodeData = {
   styleUrl: './workspace.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WorkspaceComponent implements OnInit {
+export class WorkspaceComponent {
   readonly interactionMode = signal<'select' | 'pan'>('select');
   private modelService = inject(NgDiagramModelService);
   private diagramService = inject(NgDiagramService);
   private viewportService = inject(NgDiagramViewportService);
   private selectionService = inject(NgDiagramSelectionService);
-  private destroyRef = inject(DestroyRef);
-  private newDiagramRequest = inject(NewDiagramRequestService);
-  private documentService = inject(DiagramDocumentService);
+  private diagramPages = inject(DiagramPagesService);
   private spacePanningActive = signal(false);
   readonly isPanActive = computed(
     () => this.spacePanningActive() || this.interactionMode() === 'pan',
@@ -83,17 +78,17 @@ export class WorkspaceComponent implements OnInit {
     nodeDraggingEnabled: true,
   };
 
-  model = initializeModelAdapter(
-    new LocalStorageModelAdapter(
-      'ng-diagram-custom-demo',
-      this.getDefaultModel(),
-    ),
-  );
+  model = this.createModel(this.diagramPages.activePage()?.storageKey);
 
-  ngOnInit(): void {
-    this.newDiagramRequest.requested$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.createUntitledDiagram());
+  constructor() {
+    effect(() => {
+      const activePage = this.diagramPages.activePage();
+      if (!activePage) {
+        return;
+      }
+      this.model = this.createModel(activePage.storageKey);
+      queueMicrotask(() => this.viewportService.zoomToFit());
+    });
   }
 
   async addNode() {
@@ -151,13 +146,17 @@ export class WorkspaceComponent implements OnInit {
     this.viewportService.zoomToFit();
   }
 
-  private createUntitledDiagram(): void {
-    this.documentService.createUntitled();
-    void this.resetDiagramToDefault();
-  }
-
   private generateId(): string {
     return crypto.randomUUID();
+  }
+
+  private createModel(storageKey?: string) {
+    return initializeModelAdapter(
+      new LocalStorageModelAdapter(
+        storageKey ?? 'ng-diagram-custom-demo',
+        this.getDefaultModel(),
+      ),
+    );
   }
 
   @HostListener('window:keydown', ['$event'])

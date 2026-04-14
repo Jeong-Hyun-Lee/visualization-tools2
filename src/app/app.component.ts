@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -15,8 +16,7 @@ import {
   AppPreferencesService,
   AppTheme,
 } from './app-preferences.service';
-import { DiagramDocumentService } from './diagram-document.service';
-import { NewDiagramRequestService } from './new-diagram-request.service';
+import { DiagramPagesService } from './diagram-pages.service';
 
 @Component({
   selector: 'app-root',
@@ -31,21 +31,22 @@ import { NewDiagramRequestService } from './new-diagram-request.service';
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
+    MatTabsModule,
     MatDividerModule,
     MatTooltipModule,
   ],
 })
 export class AppComponent {
-  readonly pages = ['제목없는 다이어그램-1', '제목없는 다이어그램-2'];
-  activePageIndex = 0;
-
+  readonly pages = this.diagramPages.pages;
+  readonly activePageIndex = this.diagramPages.activeIndex;
   readonly theme = this.preferences.themeState;
   readonly language = this.preferences.languageState;
-  readonly diagramName = this.diagramDocument.currentName;
+  readonly diagramName = computed(
+    () => this.diagramPages.activePage()?.name ?? '제목없는 다이어그램',
+  );
 
   constructor(
-    private readonly newDiagramRequest: NewDiagramRequestService,
-    private readonly diagramDocument: DiagramDocumentService,
+    private readonly diagramPages: DiagramPagesService,
     private readonly preferences: AppPreferencesService,
     private readonly translate: TranslateService,
   ) {
@@ -56,8 +57,8 @@ export class AppComponent {
     });
   }
 
-  onRequestNewDiagram(): void {
-    this.newDiagramRequest.requestNew();
+  onAddPage(): void {
+    this.diagramPages.addUntitledPage();
   }
 
   onThemeSelect(theme: AppTheme): void {
@@ -68,13 +69,7 @@ export class AppComponent {
     this.preferences.setLanguage(lang);
   }
 
-  onAddPage(): void {
-    const nextPageNumber = this.pages.length + 1;
-    this.pages.push(`제목없는 다이어그램-${nextPageNumber}`);
-    this.activePageIndex = this.pages.length - 1;
-  }
-
   onSelectPage(index: number): void {
-    this.activePageIndex = index;
+    this.diagramPages.selectPageByIndex(index);
   }
 }
