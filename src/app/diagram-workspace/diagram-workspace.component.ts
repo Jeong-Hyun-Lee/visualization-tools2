@@ -36,8 +36,6 @@ import {
 
 import { parseSldImportPayload } from '../node-editor/sld-import-payload';
 import { SldIoMessageService } from '../sld-io-message/sld-io-message.service';
-import { DiagramPaletteComponent } from './diagram-palette.component';
-import type { SldPaletteItem } from './diagram-palette.types';
 
 type SaveFilePickerFn = (options?: {
   suggestedName?: string;
@@ -84,7 +82,6 @@ type SerializedCell = {
     NgDiagramComponent,
     NgDiagramBackgroundComponent,
     NgDiagramMinimapComponent,
-    DiagramPaletteComponent,
   ],
 })
 export class DiagramWorkspaceComponent implements AfterViewInit, OnChanges {
@@ -128,15 +125,6 @@ export class DiagramWorkspaceComponent implements AfterViewInit, OnChanges {
     viewportPanningEnabled: true,
     nodeDraggingEnabled: true,
   } as const;
-
-  readonly paletteModel: readonly SldPaletteItem[] = [
-    this.buildPaletteNode('workspace.sldBus'),
-    this.buildPaletteNode('workspace.sldBreaker'),
-    this.buildPaletteNode('workspace.sldDisconnector'),
-    this.buildPaletteNode('workspace.sldTransformer'),
-    this.buildPaletteNode('workspace.sldGenerator'),
-    this.buildPaletteNode('workspace.sldLoad'),
-  ];
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly modelService = inject(NgDiagramModelService);
@@ -397,21 +385,6 @@ export class DiagramWorkspaceComponent implements AfterViewInit, OnChanges {
       this.viewportService.moveViewport(0, 0);
       this.applyInitialCanvasZoomLevel();
     });
-  }
-
-  private buildPaletteNode(labelKey: string): SldPaletteItem {
-    const label = this.translate.instant(labelKey);
-    return {
-      size: { width: 140, height: 64 },
-      autoSize: false,
-      resizable: true,
-      rotatable: true,
-      data: {
-        label,
-        kind: 'basic-node',
-        labelKey,
-      },
-    };
   }
 
   private applyInitialCanvasZoomLevel(): void {

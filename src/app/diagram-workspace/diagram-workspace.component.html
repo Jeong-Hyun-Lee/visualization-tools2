@@ -104,28 +104,23 @@
       </div>
     </mat-toolbar>
 
-    <div class="workspace__body">
-      <div class="workspace__stencil" [attr.aria-label]="'workspace.stencilAria' | translate">
-        <div class="workspace__stencil-title">{{ 'workspace.stencilTitle' | translate }}</div>
-        <app-diagram-palette [items]="paletteModel"></app-diagram-palette>
-      </div>
-
-      <ng-diagram
-        class="workspace__canvas"
-        role="application"
-        [attr.aria-label]="'workspace.canvasAria' | translate"
-        [model]="model"
-        [config]="diagramConfig"
-        (selectionChanged)="onSelectionChanged()"
-        (diagramInit)="onDiagramInit()"
-      >
-        <ng-diagram-background></ng-diagram-background>
-        <ng-diagram-minimap
-          position="bottom-right"
-          [width]="220"
-          [height]="140"
-          [showZoomControls]="true"
-        ></ng-diagram-minimap>
-      </ng-diagram>
-    </div>
+  <div class="workspace__body">
+    <ng-diagram
+      class="workspace__canvas"
+      role="application"
+      [attr.aria-label]="'workspace.canvasAria' | translate"
+      [model]="model"
+      [config]="diagramConfig"
+      (selectionChanged)="onSelectionChanged()"
+      (diagramInit)="onDiagramInit()"
+    >
+      <ng-diagram-background></ng-diagram-background>
+      <ng-diagram-minimap
+        position="bottom-right"
+        [width]="220"
+        [height]="140"
+        [showZoomControls]="true"
+      ></ng-diagram-minimap>
+    </ng-diagram>
+  </div>
   </div>
