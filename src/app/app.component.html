@@ -1,0 +1,68 @@
+<mat-toolbar class="app-toolbar" color="transparent">
+  <div class="app-toolbar__brand">
+    <mat-icon class="app-toolbar__logo">bolt</mat-icon>
+    <span class="brand">{{ title }}</span>
+    <span class="app-toolbar__chip">{{ 'app.brandChip' | translate }}</span>
+  </div>
+  <span class="spacer"></span>
+  <div class="app-toolbar__actions">
+    <button
+      mat-flat-button
+      class="app-toolbar__action app-toolbar__action--new-diagram"
+      type="button"
+      [matTooltip]="'app.newDiagramTooltip' | translate"
+      (click)="onRequestNewDiagram()"
+    >
+      <mat-icon>add</mat-icon>
+      {{ 'app.newDiagram' | translate }}
+    </button>
+    <button
+      mat-flat-button
+      class="app-toolbar__action"
+      type="button"
+      [matMenuTriggerFor]="settingsMenu"
+      [attr.aria-label]="'app.settingsAria' | translate"
+      [matTooltip]="'app.settings' | translate"
+    >
+      <mat-icon>settings</mat-icon>
+      {{ 'app.settings' | translate }}
+    </button>
+    <mat-menu #settingsMenu="matMenu" class="app-settings-menu" xPosition="before">
+      <button mat-menu-item disabled type="button" class="app-settings-menu__heading">
+        {{ 'app.theme' | translate }}
+      </button>
+      <button mat-menu-item type="button" (click)="onThemeSelect('light')">
+        <mat-icon [style.visibility]="theme === 'light' ? 'visible' : 'hidden'">
+          check
+        </mat-icon>
+        <span>{{ 'app.light' | translate }}</span>
+      </button>
+      <button mat-menu-item type="button" (click)="onThemeSelect('dark')">
+        <mat-icon [style.visibility]="theme === 'dark' ? 'visible' : 'hidden'">
+          check
+        </mat-icon>
+        <span>{{ 'app.dark' | translate }}</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item disabled type="button" class="app-settings-menu__heading">
+        {{ 'app.language' | translate }}
+      </button>
+      <button mat-menu-item type="button" (click)="onLanguageSelect('ko')">
+        <mat-icon [style.visibility]="language === 'ko' ? 'visible' : 'hidden'">
+          check
+        </mat-icon>
+        <span>{{ 'app.korean' | translate }}</span>
+      </button>
+      <button mat-menu-item type="button" (click)="onLanguageSelect('en')">
+        <mat-icon [style.visibility]="language === 'en' ? 'visible' : 'hidden'">
+          check
+        </mat-icon>
+        <span>{{ 'app.english' | translate }}</span>
+      </button>
+    </mat-menu>
+  </div>
+</mat-toolbar>
+
+<main>
+  <router-outlet></router-outlet>
+</main>

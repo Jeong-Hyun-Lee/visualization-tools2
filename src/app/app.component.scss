@@ -1,0 +1,125 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+main {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  min-width: 1400px;
+}
+
+.app-toolbar {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  min-height: 64px;
+  padding: 0 1rem;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+}
+
+.app-toolbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.app-toolbar__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.app-toolbar__logo {
+  color: #2563eb;
+}
+
+.brand {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #0f172a;
+}
+
+.app-toolbar__chip {
+  border-radius: 999px;
+  padding: 0.15rem 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+
+.app-toolbar__action {
+  border-radius: 10px;
+  height: 36px;
+  padding: 0 0.75rem;
+  font-weight: 500;
+  color: #0f172a;
+  background: #eef2ff;
+  border: 1px solid #dbe3ff;
+}
+
+.app-toolbar__action mat-icon {
+  margin-right: 0.25rem;
+  vertical-align: middle;
+}
+
+.app-toolbar__action:hover {
+  background: #e0e7ff;
+}
+
+/* Settings와 동일 형태, 배경만 흰색 — 텍스트/아이콘은 primary(인디고) 유지 */
+.app-toolbar__action--new-diagram.mat-flat-button {
+  color: #3f51b5;
+  background-color: #fff;
+  border: 1px solid #dbe3ff;
+}
+
+.app-toolbar__action--new-diagram.mat-flat-button:hover {
+  background-color: #f8fafc;
+}
+
+.app-toolbar__action--new-diagram.mat-flat-button .mat-button-focus-overlay {
+  background-color: rgba(63, 81, 181, 0.08);
+}
+
+::ng-deep .app-settings-menu {
+  .app-settings-menu__heading {
+    min-height: 36px;
+    line-height: 36px;
+    opacity: 1;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #64748b;
+    cursor: default;
+    background: transparent;
+  }
+
+  .mat-menu-item .mat-icon {
+    margin-right: 0.5rem;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    color: #3f51b5;
+  }
+}
+
+body.theme-dark ::ng-deep .app-settings-menu .mat-menu-item .mat-icon {
+  color: #9fa8da;
+}
+
+body.theme-dark ::ng-deep .app-settings-menu .app-settings-menu__heading {
+  color: #94a3b8;
+}

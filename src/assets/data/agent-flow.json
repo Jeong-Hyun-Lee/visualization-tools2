@@ -1,0 +1,57 @@
+{
+  "llm": {
+    "key": "llm",
+    "iconText": "AI",
+    "title": "LLM 호출",
+    "desc": "대화형 모델로 추론/생성 작업을 수행합니다.",
+    "theme": "blue",
+    "inputPlaceholder": "프롬프트/지시문을 입력하세요."
+  },
+  "code": {
+    "key": "code",
+    "iconText": "C",
+    "title": "코드 실행",
+    "desc": "스크립트/함수 실행로 변환/가공을 합니다.",
+    "theme": "green",
+    "inputPlaceholder": "실행할 코드/파라미터를 입력하세요."
+  },
+  "branch": {
+    "key": "branch",
+    "iconText": "IF",
+    "title": "분기",
+    "desc": "조건에 따라 다음 경로를 나눕니다.",
+    "theme": "orange"
+  },
+  "loop": {
+    "key": "loop",
+    "iconText": "LOOP",
+    "title": "반복",
+    "desc": "리스트/조건 기반 반복 처리 블록입니다.",
+    "theme": "red",
+    "inputPlaceholder": "반복 대상/종료 조건을 입력하세요."
+  },
+  "kb": {
+    "key": "kb",
+    "iconText": "KB",
+    "title": "지식 검색",
+    "desc": "벡터/문서 지식베이스를 조회합니다.",
+    "theme": "blue",
+    "inputPlaceholder": "검색 쿼리를 입력하세요."
+  },
+  "mcp": {
+    "key": "mcp",
+    "iconText": "M",
+    "title": "MCP 도구",
+    "desc": "외부 도구/서비스와 연동합니다.",
+    "theme": "green",
+    "inputPlaceholder": "도구 입력(JSON/텍스트)을 입력하세요."
+  },
+  "db": {
+    "key": "db",
+    "iconText": "DB",
+    "title": "데이터소스",
+    "desc": "DB/스토리지에서 데이터를 읽고 씁니다.",
+    "theme": "orange",
+    "inputPlaceholder": "SQL/쿼리 또는 키를 입력하세요."
+  }
+}

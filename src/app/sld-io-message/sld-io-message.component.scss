@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+
+.sld-io-message {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  color: #0f172a;
+  background: #ecfdf5;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.sld-io-message--error {
+  color: #7f1d1d;
+  background: #fef2f2;
+  border-bottom-color: rgba(220, 38, 38, 0.35);
+}
