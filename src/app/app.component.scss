@@ -93,3 +93,54 @@ main {
   outline: 2px solid rgba(63, 81, 181, 0.35);
   outline-offset: 2px;
 }
+
+.app-pagebar {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  height: 40px;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+  background: #0f172a;
+}
+
+.app-pagebar__icon-btn {
+  width: 40px;
+  border: 0;
+  border-right: 1px solid rgba(148, 163, 184, 0.2);
+  background: #111827;
+  color: #e2e8f0;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.app-pagebar__icon-btn:hover {
+  background: #1f2937;
+}
+
+.app-pagebar__tabs {
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+}
+
+.app-pagebar__tab {
+  border: 0;
+  border-right: 1px solid rgba(148, 163, 184, 0.2);
+  background: #111827;
+  color: #cbd5e1;
+  padding: 0 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.app-pagebar__tab:hover {
+  background: #1f2937;
+}
+
+.app-pagebar__tab--active {
+  background: #0ea5e9;
+  color: #0f172a;
+  font-weight: 700;
+}

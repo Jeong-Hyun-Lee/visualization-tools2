@@ -30,9 +30,9 @@ describe('AppComponent', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it(`should have as title 'GE Vernova'`, () => {
+  it(`should have default diagram name`, () => {
     const fixture = TestBed.createComponent(AppComponent);
-    expect(fixture.componentInstance.title).toEqual('GE Vernova');
+    expect(fixture.componentInstance.diagramName()).toEqual('제목없는 다이어그램');
   });
 
   it('should render title in toolbar', () => {
@@ -40,7 +40,7 @@ describe('AppComponent', () => {
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('.brand')?.textContent).toContain(
-      'GE Vernova',
+      '제목없는 다이어그램',
     );
   });
 });

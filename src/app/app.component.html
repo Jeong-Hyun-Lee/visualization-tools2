@@ -1,8 +1,8 @@
 <mat-toolbar class="app-toolbar" color="transparent">
   <div class="app-toolbar__brand">
     <mat-icon class="app-toolbar__logo">bolt</mat-icon>
-    <span class="brand">{{ title }}</span>
-    <span class="app-toolbar__chip">{{ 'app.brandChip' | translate }}</span>
+    <span class="brand">{{ diagramName() }}</span>
+    <span class="app-toolbar__chip">{{ "app.brandChip" | translate }}</span>
   </div>
   <span class="spacer"></span>
   <div class="app-toolbar__actions">
@@ -14,7 +14,7 @@
       (click)="onRequestNewDiagram()"
     >
       <mat-icon>add</mat-icon>
-      {{ 'app.newDiagram' | translate }}
+      {{ "app.newDiagram" | translate }}
     </button>
     <button
       mat-flat-button
@@ -25,43 +25,88 @@
       [matTooltip]="'app.settings' | translate"
     >
       <mat-icon>settings</mat-icon>
-      {{ 'app.settings' | translate }}
+      {{ "app.settings" | translate }}
     </button>
-    <mat-menu #settingsMenu="matMenu" class="app-settings-menu" xPosition="before">
-      <button mat-menu-item disabled type="button" class="app-settings-menu__heading">
-        {{ 'app.theme' | translate }}
+    <mat-menu
+      #settingsMenu="matMenu"
+      class="app-settings-menu"
+      xPosition="before"
+    >
+      <button
+        mat-menu-item
+        disabled
+        type="button"
+        class="app-settings-menu__heading"
+      >
+        {{ "app.theme" | translate }}
       </button>
       <button mat-menu-item type="button" (click)="onThemeSelect('light')">
-        <mat-icon [style.visibility]="theme() === 'light' ? 'visible' : 'hidden'">
+        <mat-icon
+          [style.visibility]="theme() === 'light' ? 'visible' : 'hidden'"
+        >
           check
         </mat-icon>
-        <span>{{ 'app.light' | translate }}</span>
+        <span>{{ "app.light" | translate }}</span>
       </button>
       <button mat-menu-item type="button" (click)="onThemeSelect('dark')">
-        <mat-icon [style.visibility]="theme() === 'dark' ? 'visible' : 'hidden'">
+        <mat-icon
+          [style.visibility]="theme() === 'dark' ? 'visible' : 'hidden'"
+        >
           check
         </mat-icon>
-        <span>{{ 'app.dark' | translate }}</span>
+        <span>{{ "app.dark" | translate }}</span>
       </button>
       <mat-divider></mat-divider>
-      <button mat-menu-item disabled type="button" class="app-settings-menu__heading">
-        {{ 'app.language' | translate }}
+      <button
+        mat-menu-item
+        disabled
+        type="button"
+        class="app-settings-menu__heading"
+      >
+        {{ "app.language" | translate }}
       </button>
       <button mat-menu-item type="button" (click)="onLanguageSelect('ko')">
-        <mat-icon [style.visibility]="language() === 'ko' ? 'visible' : 'hidden'">
+        <mat-icon
+          [style.visibility]="language() === 'ko' ? 'visible' : 'hidden'"
+        >
           check
         </mat-icon>
-        <span>{{ 'app.korean' | translate }}</span>
+        <span>{{ "app.korean" | translate }}</span>
       </button>
       <button mat-menu-item type="button" (click)="onLanguageSelect('en')">
-        <mat-icon [style.visibility]="language() === 'en' ? 'visible' : 'hidden'">
+        <mat-icon
+          [style.visibility]="language() === 'en' ? 'visible' : 'hidden'"
+        >
           check
         </mat-icon>
-        <span>{{ 'app.english' | translate }}</span>
+        <span>{{ "app.english" | translate }}</span>
       </button>
     </mat-menu>
   </div>
 </mat-toolbar>
+
+<div class="app-pagebar">
+  <button
+    type="button"
+    class="app-pagebar__icon-btn"
+    aria-label="새 다이어그램 추가"
+    (click)="onAddPage()"
+  >
+    +
+  </button>
+  <div class="app-pagebar__tabs">
+    @for (page of pages; track page; let idx = $index) {
+      <button
+        type="button"
+        class="app-pagebar__tab"
+        [class.app-pagebar__tab--active]="activePageIndex === idx"
+        (click)="onSelectPage(idx)"
+      >
+        {{ page }}
+      </button>
+    }
+  </div>
+</div>
 
 <main>
   <router-outlet></router-outlet>

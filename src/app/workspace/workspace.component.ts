@@ -1,11 +1,14 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   HostListener,
+  OnInit,
   computed,
   inject,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import type { Model, NgDiagramConfig, Node, NgDiagramPaletteItem } from 'ng-diagram';
 import {
   initializeModelAdapter,
@@ -18,6 +21,8 @@ import {
   NgDiagramService,
   NgDiagramViewportService,
 } from 'ng-diagram';
+import { DiagramDocumentService } from '../diagram-document.service';
+import { NewDiagramRequestService } from '../new-diagram-request.service';
 import { LocalStorageModelAdapter } from './local-storage-model-adapter';
 
 type DemoNodeData = {
@@ -37,12 +42,15 @@ type DemoNodeData = {
   styleUrl: './workspace.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WorkspaceComponent {
+export class WorkspaceComponent implements OnInit {
   readonly interactionMode = signal<'select' | 'pan'>('select');
   private modelService = inject(NgDiagramModelService);
   private diagramService = inject(NgDiagramService);
   private viewportService = inject(NgDiagramViewportService);
   private selectionService = inject(NgDiagramSelectionService);
+  private destroyRef = inject(DestroyRef);
+  private newDiagramRequest = inject(NewDiagramRequestService);
+  private documentService = inject(DiagramDocumentService);
   private spacePanningActive = signal(false);
   readonly isPanActive = computed(
     () => this.spacePanningActive() || this.interactionMode() === 'pan',
@@ -81,6 +89,12 @@ export class WorkspaceComponent {
       this.getDefaultModel(),
     ),
   );
+
+  ngOnInit(): void {
+    this.newDiagramRequest.requested$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.createUntitledDiagram());
+  }
 
   async addNode() {
     const existingNodes = this.modelService.nodes();
@@ -135,6 +149,11 @@ export class WorkspaceComponent {
       { waitForMeasurements: true },
     );
     this.viewportService.zoomToFit();
+  }
+
+  private createUntitledDiagram(): void {
+    this.documentService.createUntitled();
+    void this.resetDiagramToDefault();
   }
 
   private generateId(): string {

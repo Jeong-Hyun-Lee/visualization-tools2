@@ -15,6 +15,7 @@ import {
   AppPreferencesService,
   AppTheme,
 } from './app-preferences.service';
+import { DiagramDocumentService } from './diagram-document.service';
 import { NewDiagramRequestService } from './new-diagram-request.service';
 
 @Component({
@@ -35,13 +36,16 @@ import { NewDiagramRequestService } from './new-diagram-request.service';
   ],
 })
 export class AppComponent {
-  title = 'GE Vernova';
+  readonly pages = ['제목없는 다이어그램-1', '제목없는 다이어그램-2'];
+  activePageIndex = 0;
 
   readonly theme = this.preferences.themeState;
   readonly language = this.preferences.languageState;
+  readonly diagramName = this.diagramDocument.currentName;
 
   constructor(
     private readonly newDiagramRequest: NewDiagramRequestService,
+    private readonly diagramDocument: DiagramDocumentService,
     private readonly preferences: AppPreferencesService,
     private readonly translate: TranslateService,
   ) {
@@ -62,5 +66,15 @@ export class AppComponent {
 
   onLanguageSelect(lang: AppLanguage): void {
     this.preferences.setLanguage(lang);
+  }
+
+  onAddPage(): void {
+    const nextPageNumber = this.pages.length + 1;
+    this.pages.push(`제목없는 다이어그램-${nextPageNumber}`);
+    this.activePageIndex = this.pages.length - 1;
+  }
+
+  onSelectPage(index: number): void {
+    this.activePageIndex = index;
   }
 }
