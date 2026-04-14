@@ -1,19 +1,31 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import type { Model, NgDiagramConfig, Node } from 'ng-diagram';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import type { Model, NgDiagramConfig, Node, NgDiagramPaletteItem } from 'ng-diagram';
 import {
   initializeModelAdapter,
   NgDiagramBackgroundComponent,
   NgDiagramComponent,
   NgDiagramModelService,
+  NgDiagramPaletteItemComponent,
+  NgDiagramPaletteItemPreviewComponent,
+  NgDiagramSelectionService,
   NgDiagramService,
   NgDiagramViewportService,
 } from 'ng-diagram';
 import { LocalStorageModelAdapter } from './local-storage-model-adapter';
 
+type DemoNodeData = {
+  label: string;
+};
+
 @Component({
   selector: 'diagram',
   standalone: true,
-  imports: [NgDiagramComponent, NgDiagramBackgroundComponent],
+  imports: [
+    NgDiagramComponent,
+    NgDiagramBackgroundComponent,
+    NgDiagramPaletteItemComponent,
+    NgDiagramPaletteItemPreviewComponent,
+  ],
   templateUrl: './diagram.component.html',
   styleUrl: './diagram.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,12 +34,30 @@ export class DiagramComponent {
   private modelService = inject(NgDiagramModelService);
   private diagramService = inject(NgDiagramService);
   private viewportService = inject(NgDiagramViewportService);
+  private selectionService = inject(NgDiagramSelectionService);
+
+  readonly selectedNode = computed(
+    () => this.selectionService.selection().nodes[0] ?? null,
+  );
+  readonly hasSelectedNode = computed(() => this.selectedNode() !== null);
+  readonly selectedNodeLabel = computed(() => {
+    const data = this.selectedNode()?.data as DemoNodeData | undefined;
+    return data?.label ?? 'Unknown Node';
+  });
+  readonly selectedNodeId = computed(() => this.selectedNode()?.id ?? '-');
+
+  readonly paletteModel: NgDiagramPaletteItem[] = [
+    { data: { label: 'Process' }, resizable: true, rotatable: true },
+    { data: { label: 'Decision' }, resizable: true, rotatable: true },
+    { data: { label: 'Start / End' }, resizable: true, rotatable: false },
+    { data: { label: 'Data' }, resizable: true, rotatable: true },
+  ];
 
   config: NgDiagramConfig = {
     zoom: {
       zoomToFit: {
         onInit: true,
-        padding: 20,
+        padding: [28, 320, 28, 280],
       },
     },
   };
@@ -42,13 +72,15 @@ export class DiagramComponent {
   async addNode() {
     const existingNodes = this.modelService.nodes();
     const newId = this.generateId();
-    const randomX = Math.floor(Math.random() * 400) + 50;
-    const randomY = Math.floor(Math.random() * 300) + 50;
+    const randomX = Math.floor(Math.random() * 540) + 120;
+    const randomY = Math.floor(Math.random() * 360) + 70;
 
     const newNode: Node = {
       id: newId,
       position: { x: randomX, y: randomY },
-      data: { label: `Custom Node ${existingNodes.length + 1}` },
+      data: { label: `Node ${existingNodes.length + 1}` },
+      resizable: true,
+      rotatable: true,
     };
 
     await this.diagramService.transaction(
@@ -99,13 +131,17 @@ export class DiagramComponent {
       nodes: [
         {
           id: nodeId1,
-          position: { x: 0, y: 0 },
+          position: { x: 120, y: 120 },
           data: { label: 'Node 1' },
+          resizable: true,
+          rotatable: true,
         },
         {
           id: nodeId2,
-          position: { x: 420, y: 0 },
+          position: { x: 580, y: 120 },
           data: { label: 'Node 2' },
+          resizable: true,
+          rotatable: true,
         },
       ],
       edges: [

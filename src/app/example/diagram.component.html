@@ -1,12 +1,50 @@
-<div class="example-container">
-  <div class="button-controls">
-    <button (click)="addNode()">Add Node</button>
-    <button class="secondary" (click)="reset()">Reset to Default</button>
-  </div>
+<div class="workspace">
+  <aside class="workspace__palette">
+    <div class="workspace__panel-title">Shapes</div>
+    <div class="workspace__palette-list">
+      @for (paletteItem of paletteModel; track paletteItem.data?.['label'] || $index) {
+        <ng-diagram-palette-item [item]="paletteItem">
+          <div class="palette-item">{{ paletteItem.data['label'] }}</div>
+          <ng-diagram-palette-item-preview>
+            <div class="palette-item palette-item--preview">{{ paletteItem.data['label'] }}</div>
+          </ng-diagram-palette-item-preview>
+        </ng-diagram-palette-item>
+      }
+    </div>
+  </aside>
 
-  <div class="not-content diagram">
-    <ng-diagram [model]="model" [config]="config" class="diagram">
-      <ng-diagram-background />
-    </ng-diagram>
-  </div>
+  <section class="workspace__center">
+    <div class="workspace__topbar">
+      <div class="workspace__title">Diagram</div>
+      <div class="workspace__actions">
+        <button (click)="addNode()">Add Node</button>
+        <button class="secondary" (click)="reset()">Reset</button>
+      </div>
+    </div>
+
+    <div class="workspace__canvas not-content">
+      <ng-diagram [model]="model" [config]="config" class="diagram">
+        <ng-diagram-background />
+      </ng-diagram>
+    </div>
+  </section>
+
+  <aside class="workspace__sidebar">
+    <div class="workspace__panel-title">Properties</div>
+    <div class="mock-form">
+      <label>Node ID</label>
+      <input [value]="selectedNodeId()" readonly />
+      <label>Label</label>
+      <input [value]="selectedNodeLabel()" readonly />
+      <label>Type</label>
+      <select disabled>
+        <option>Process</option>
+      </select>
+      <label>Status</label>
+      <div class="mock-badges">
+        <span class="badge">Resizable</span>
+        <span class="badge">Rotatable</span>
+      </div>
+    </div>
+  </aside>
 </div>
