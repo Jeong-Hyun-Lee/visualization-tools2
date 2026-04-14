@@ -21,11 +21,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  NgDiagramClipboardService,
+  NgDiagramBackgroundComponent,
   NgDiagramComponent,
   NgDiagramModelService,
   NgDiagramMinimapComponent,
-  NgDiagramNodeTemplateMap,
   NgDiagramSelectionService,
   NgDiagramViewportService,
   initializeModel,
@@ -37,7 +36,8 @@ import {
 
 import { parseSldImportPayload } from '../node-editor/sld-import-payload';
 import { SldIoMessageService } from '../sld-io-message/sld-io-message.service';
-import { SldDiagramNodeComponent } from './sld-diagram-node.component';
+import { DiagramPaletteComponent } from './diagram-palette.component';
+import type { SldPaletteItem } from './diagram-palette.types';
 
 type SaveFilePickerFn = (options?: {
   suggestedName?: string;
@@ -68,12 +68,6 @@ type SerializedCell = {
   isGroup?: boolean;
 };
 
-type PaletteItem = {
-  type: string;
-  labelKey: string;
-  template?: boolean;
-};
-
 @Component({
   selector: 'app-diagram-workspace',
   templateUrl: './diagram-workspace.component.html',
@@ -88,10 +82,14 @@ type PaletteItem = {
     MatIconModule,
     MatTooltipModule,
     NgDiagramComponent,
+    NgDiagramBackgroundComponent,
     NgDiagramMinimapComponent,
+    DiagramPaletteComponent,
   ],
 })
 export class DiagramWorkspaceComponent implements AfterViewInit, OnChanges {
+  private static readonly INITIAL_CANVAS_ZOOM = 0.8;
+
   @Input() diagramId = '';
   @Input() diagramName = '';
   @Input() pendingImportCells: object[] | null = null;
@@ -113,71 +111,37 @@ export class DiagramWorkspaceComponent implements AfterViewInit, OnChanges {
     edges: [],
     metadata: {},
   });
-  readonly nodeTemplateMap = new NgDiagramNodeTemplateMap([
-    ['sld-node', SldDiagramNodeComponent],
-    ['sld-group', SldDiagramNodeComponent],
-    ['sld-bus', SldDiagramNodeComponent],
-    ['sld-bus-v', SldDiagramNodeComponent],
-    ['sld-breaker', SldDiagramNodeComponent],
-    ['sld-disconnector', SldDiagramNodeComponent],
-    ['sld-transformer', SldDiagramNodeComponent],
-    ['sld-generator', SldDiagramNodeComponent],
-    ['sld-load', SldDiagramNodeComponent],
-    ['sld-ground', SldDiagramNodeComponent],
-    ['sld-relay', SldDiagramNodeComponent],
-    ['sld-fuse', SldDiagramNodeComponent],
-    ['sld-ct', SldDiagramNodeComponent],
-    ['sld-ts', SldDiagramNodeComponent],
-    ['sld-sb', SldDiagramNodeComponent],
-    ['sld-indicator', SldDiagramNodeComponent],
-    ['sld-terminal', SldDiagramNodeComponent],
-    ['sld-meter', SldDiagramNodeComponent],
-    ['sld-pothead', SldDiagramNodeComponent],
-    ['sld-equipment-region', SldDiagramNodeComponent],
-  ]);
-
   readonly diagramConfig = {
     debugMode: false,
-    zooming: {
-      minZoom: 0.5,
-      maxZoom: 3,
-      wheelStep: 0.1,
+    zoom: {
+      min: 0.2,
+      max: 3,
+      step: 0.1,
+      zoomToFit: {
+        onInit: false,
+        padding: 24,
+      },
     },
-    panning: {
-      enabled: true,
+    edgeRouting: {
+      defaultRouting: 'polyline',
     },
+    viewportPanningEnabled: true,
+    nodeDraggingEnabled: true,
   } as const;
 
-  readonly paletteItems: readonly PaletteItem[] = [
-    { type: 'sld-bus', labelKey: 'workspace.sldBus' },
-    { type: 'sld-bus-v', labelKey: 'workspace.sldBusV' },
-    { type: 'sld-breaker', labelKey: 'workspace.sldBreaker' },
-    { type: 'sld-disconnector', labelKey: 'workspace.sldDisconnector' },
-    { type: 'sld-transformer', labelKey: 'workspace.sldTransformer' },
-    { type: 'sld-generator', labelKey: 'workspace.sldGenerator' },
-    { type: 'sld-load', labelKey: 'workspace.sldLoad' },
-    { type: 'sld-ground', labelKey: 'workspace.sldGround' },
-    { type: 'sld-relay', labelKey: 'workspace.sldRelay' },
-    { type: 'sld-fuse', labelKey: 'workspace.sldFuse' },
-    { type: 'sld-ct', labelKey: 'workspace.sldCt' },
-    { type: 'sld-ts', labelKey: 'workspace.sldTs' },
-    { type: 'sld-sb', labelKey: 'workspace.sldSb' },
-    { type: 'sld-indicator', labelKey: 'workspace.sldIndicator' },
-    { type: 'sld-terminal', labelKey: 'workspace.sldTerminal' },
-    { type: 'sld-meter', labelKey: 'workspace.sldMeter' },
-    { type: 'sld-pothead', labelKey: 'workspace.sldPothead' },
-    { type: 'sld-equipment-region', labelKey: 'workspace.sldRegion' },
-    { type: 'bay-template-1', labelKey: 'workspace.bay1Title', template: true },
-    { type: 'bay-template-2', labelKey: 'workspace.bay2Title', template: true },
+  readonly paletteModel: readonly SldPaletteItem[] = [
+    this.buildPaletteNode('workspace.sldBus'),
+    this.buildPaletteNode('workspace.sldBreaker'),
+    this.buildPaletteNode('workspace.sldDisconnector'),
+    this.buildPaletteNode('workspace.sldTransformer'),
+    this.buildPaletteNode('workspace.sldGenerator'),
+    this.buildPaletteNode('workspace.sldLoad'),
   ];
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly modelService = inject(NgDiagramModelService);
-  private readonly clipboardService = inject(NgDiagramClipboardService);
   private readonly selectionService = inject(NgDiagramSelectionService);
   private readonly viewportService = inject(NgDiagramViewportService);
-  private nextNodeIndex = 1;
-  private lastPointerFlowPos = { x: 300, y: 200 };
 
   constructor(
     private readonly cdr: ChangeDetectorRef,
@@ -226,99 +190,6 @@ export class DiagramWorkspaceComponent implements AfterViewInit, OnChanges {
       this.saveSessionRequested.emit();
       return;
     }
-
-    if ((ev.ctrlKey || ev.metaKey) && !ev.altKey && ev.code === 'KeyZ') {
-      if (inEditable || !this.isActiveWorkspaceTab()) {
-        return;
-      }
-      ev.preventDefault();
-      if (ev.shiftKey) {
-        this.redo();
-      } else {
-        this.undo();
-      }
-      return;
-    }
-
-    if ((ev.ctrlKey || ev.metaKey) && !ev.shiftKey && !ev.altKey && ev.code === 'KeyY') {
-      if (inEditable || !this.isActiveWorkspaceTab()) {
-        return;
-      }
-      ev.preventDefault();
-      this.redo();
-      return;
-    }
-
-    if ((ev.ctrlKey || ev.metaKey) && !ev.shiftKey && !ev.altKey && ev.code === 'KeyA') {
-      if (inEditable || !this.isActiveWorkspaceTab()) {
-        return;
-      }
-      ev.preventDefault();
-      const nodes = this.modelService.nodes().map((n) => n.id);
-      const edges = this.modelService.edges().map((e) => e.id);
-      this.selectionService.select(nodes, edges);
-      return;
-    }
-
-    if ((ev.ctrlKey || ev.metaKey) && !ev.shiftKey && !ev.altKey && ev.code === 'KeyC') {
-      if (inEditable || !this.isActiveWorkspaceTab()) {
-        return;
-      }
-      ev.preventDefault();
-      this.clipboardService.copy();
-      return;
-    }
-
-    if ((ev.ctrlKey || ev.metaKey) && !ev.shiftKey && !ev.altKey && ev.code === 'KeyX') {
-      if (inEditable || !this.isActiveWorkspaceTab()) {
-        return;
-      }
-      ev.preventDefault();
-      this.clipboardService.cut();
-      return;
-    }
-
-    if ((ev.ctrlKey || ev.metaKey) && !ev.shiftKey && !ev.altKey && ev.code === 'KeyV') {
-      if (inEditable || !this.isActiveWorkspaceTab()) {
-        return;
-      }
-      ev.preventDefault();
-      this.clipboardService.paste(this.lastPointerFlowPos);
-      this.cdr.markForCheck();
-      return;
-    }
-
-    if ((ev.ctrlKey || ev.metaKey) && !ev.altKey && ev.code === 'KeyG') {
-      if (inEditable || !this.isActiveWorkspaceTab()) {
-        return;
-      }
-      ev.preventDefault();
-      if (ev.shiftKey) {
-        this.ungroupSelected();
-      } else {
-        this.groupSelected();
-      }
-      return;
-    }
-
-    if (!ev.ctrlKey && !ev.metaKey && !ev.altKey && (ev.code === 'Delete' || ev.code === 'Backspace')) {
-      if (inEditable || !this.isActiveWorkspaceTab()) {
-        return;
-      }
-      ev.preventDefault();
-      this.deleteSelected();
-    }
-  }
-
-  @HostListener('document:mousemove', ['$event'])
-  onDocMouseMove(ev: MouseEvent): void {
-    if (!this.isActiveWorkspaceTab()) {
-      return;
-    }
-    this.lastPointerFlowPos = this.viewportService.clientToFlowPosition({
-      x: ev.clientX,
-      y: ev.clientY,
-    });
   }
 
   private isActiveWorkspaceTab(): boolean {
@@ -517,178 +388,45 @@ export class DiagramWorkspaceComponent implements AfterViewInit, OnChanges {
     this.cdr.markForCheck();
   }
 
-  groupSelected(): void {
-    const selectedNodes = this.selectionService
-      .selection()
-      .nodes.filter((n) => !n.groupId && !(n as { isGroup?: boolean }).isGroup);
-    if (selectedNodes.length < 2) {
-      return;
-    }
-
-    const boxes = selectedNodes.map((n) => {
-      const width = n.size?.width ?? 140;
-      const height = n.size?.height ?? 64;
-      return {
-        x: n.position.x,
-        y: n.position.y,
-        width,
-        height,
-      };
-    });
-    const minX = Math.min(...boxes.map((b) => b.x));
-    const minY = Math.min(...boxes.map((b) => b.y));
-    const maxX = Math.max(...boxes.map((b) => b.x + b.width));
-    const maxY = Math.max(...boxes.map((b) => b.y + b.height));
-    const paddingX = 24;
-    const paddingTop = 28;
-    const paddingBottom = 18;
-    const groupId = this.newId('group');
-    const groupNode: Node = {
-      id: groupId,
-      type: 'sld-group',
-      isGroup: true,
-      position: { x: minX - paddingX, y: minY - paddingTop },
-      size: {
-        width: maxX - minX + paddingX * 2,
-        height: maxY - minY + paddingTop + paddingBottom,
-      },
-      data: { kind: 'bay-group', label: 'GROUP' },
-      autoSize: false,
-      resizable: true,
-      rotatable: false,
-      draggable: true,
-    };
-    this.modelService.addNodes([groupNode]);
-    this.modelService.updateNodes(
-      selectedNodes.map((n) => ({ id: n.id, groupId })),
-    );
-    this.selectionService.select([groupId, ...selectedNodes.map((n) => n.id)]);
-    this.cdr.markForCheck();
-  }
-
-  ungroupSelected(): void {
-    const selectedGroups = this.selectionService
-      .selection()
-      .nodes.filter((n) => (n as { isGroup?: boolean }).isGroup);
-    if (!selectedGroups.length) {
-      return;
-    }
-    const groupIds = selectedGroups.map((g) => g.id);
-    const allNodes = this.modelService.nodes();
-    const childNodes = allNodes.filter(
-      (n) => n.groupId != null && groupIds.includes(n.groupId),
-    );
-    if (childNodes.length) {
-      this.modelService.updateNodes(
-        childNodes.map((n) => ({ id: n.id, groupId: undefined })),
-      );
-      this.selectionService.select(childNodes.map((n) => n.id));
-    }
-    this.modelService.deleteNodes(groupIds);
-    this.cdr.markForCheck();
-  }
-
-  addFromPalette(type: string, isTemplate = false): void {
-    if (isTemplate) {
-      this.addBayTemplate(type as 'bay-template-1' | 'bay-template-2');
-      return;
-    }
-    const next = this.computeNextPosition();
-    this.modelService.addNodes([
-      {
-        id: this.newId('node'),
-        type,
-        position: next,
-        size: { width: 140, height: 64 },
-        autoSize: false,
-        resizable: true,
-        rotatable: true,
-        draggable: true,
-        data: { kind: type, label: type.replace('sld-', '').toUpperCase() },
-      },
-    ]);
-    this.cdr.markForCheck();
-  }
-
   onSelectionChanged(): void {
     this.cdr.markForCheck();
   }
 
   onDiagramInit(): void {
-    this.viewportService.zoomToFit({ padding: 24 });
+    queueMicrotask(() => {
+      this.viewportService.moveViewport(0, 0);
+      this.applyInitialCanvasZoomLevel();
+    });
   }
 
-  private addBayTemplate(kind: 'bay-template-1' | 'bay-template-2'): void {
-    const origin = this.computeNextPosition();
-    const parts =
-      kind === 'bay-template-1'
-        ? ['sld-bus', 'sld-breaker', 'sld-load']
-        : ['sld-bus', 'sld-breaker', 'sld-transformer', 'sld-generator'];
-
-    const nodes: Node[] = [];
-    const edges: Edge[] = [];
-    let x = origin.x;
-    for (const part of parts) {
-      const id = this.newId('node');
-      nodes.push({
-        id,
-        type: part,
-        position: { x, y: origin.y },
-        size: { width: 140, height: 64 },
-        autoSize: false,
-        resizable: true,
-        rotatable: true,
-        draggable: true,
-        data: { kind: part, label: part.replace('sld-', '').toUpperCase() },
-      });
-      x += 200;
-    }
-    for (let i = 0; i < nodes.length - 1; i += 1) {
-      edges.push({
-        id: this.newId('edge'),
-        source: nodes[i].id,
-        target: nodes[i + 1].id,
-        sourcePort: 'right',
-        targetPort: 'left',
-        data: {},
-      });
-    }
-    const groupId = this.newId('group');
-    const groupNode: Node = {
-      id: groupId,
-      type: 'sld-group',
-      isGroup: true,
-      position: { x: origin.x - 24, y: origin.y - 30 },
-      size: { width: (nodes.length - 1) * 200 + 188, height: 112 },
+  private buildPaletteNode(labelKey: string): SldPaletteItem {
+    const label = this.translate.instant(labelKey);
+    return {
+      size: { width: 140, height: 64 },
       autoSize: false,
       resizable: true,
-      rotatable: false,
-      draggable: true,
+      rotatable: true,
       data: {
-        kind: 'bay-group',
-        label:
-          kind === 'bay-template-1'
-            ? this.translate.instant('workspace.bayExpanded1')
-            : this.translate.instant('workspace.bayExpanded2'),
+        label,
+        kind: 'basic-node',
+        labelKey,
       },
     };
-    this.modelService.addNodes([groupNode, ...nodes]);
-    this.modelService.updateNodes(nodes.map((n) => ({ id: n.id, groupId })));
-    this.modelService.addEdges(edges);
-    this.selectionService.select([groupId, ...nodes.map((n) => n.id)]);
-    queueMicrotask(() => this.viewportService.zoomToFit({ padding: 24 }));
-    this.cdr.markForCheck();
   }
 
-  private computeNextPosition(): { x: number; y: number } {
-    const idx = this.nextNodeIndex++;
-    const col = (idx - 1) % 4;
-    const row = Math.floor((idx - 1) / 4);
-    return { x: 80 + col * 220, y: 80 + row * 140 };
-  }
-
-  private newId(prefix: string): string {
-    return `${prefix}-${crypto.randomUUID()}`;
+  private applyInitialCanvasZoomLevel(): void {
+    const current = this.viewportService.scale();
+    if (current <= 0) {
+      return;
+    }
+    const target = Math.min(
+      this.viewportService.maxZoom,
+      Math.max(
+        this.viewportService.minZoom,
+        DiagramWorkspaceComponent.INITIAL_CANVAS_ZOOM,
+      ),
+    );
+    this.viewportService.zoom(target / current);
   }
 
   private serializeCells(): SerializedCell[] {
@@ -740,6 +478,7 @@ export class DiagramWorkspaceComponent implements AfterViewInit, OnChanges {
             typeof cell.source === 'string' ? undefined : cell.source?.port,
           targetPort:
             typeof cell.target === 'string' ? undefined : cell.target?.port,
+          routing: 'polyline',
           type: cell.type,
           data: cell.data ?? {},
         });

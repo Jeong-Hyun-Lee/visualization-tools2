@@ -10,152 +10,43 @@
     aria-hidden="true"
     />
 
-    <div class="layout__tabs" role="tablist" [attr.aria-label]="'nodeEditor.tablistAria' | translate">
-      @for (diagram of diagrams(); track diagram) {
-        <div
-          class="layout__tab"
-          [class.layout__tab--active]="diagram.id === activeDiagramId()"
-          role="tab"
-          [attr.aria-selected]="diagram.id === activeDiagramId()"
-          (click)="selectDiagram(diagram.id)"
+  <div class="layout__tabs" role="tablist" [attr.aria-label]="'nodeEditor.tablistAria' | translate">
+    @for (diagram of diagrams(); track diagram) {
+      <div
+        class="layout__tab"
+        [class.layout__tab--active]="diagram.id === activeDiagramId()"
+        role="tab"
+        [attr.aria-selected]="diagram.id === activeDiagramId()"
+        (click)="selectDiagram(diagram.id)"
+      >
+        <span class="layout__tab-label">{{ diagram.name }}</span>
+        @if (diagrams().length > 1) {
+          <button
+            mat-icon-button
+            type="button"
+            class="layout__tab-close"
+            [attr.aria-label]="'nodeEditor.closeTabAria' | translate"
+            [matTooltip]="'nodeEditor.closeTabTooltip' | translate"
+            (click)="closeDiagram(diagram.id, $event)"
           >
-          <span class="layout__tab-label">{{ diagram.name }}</span>
-          @if (diagrams().length > 1) {
-            <button
-              mat-icon-button
-              type="button"
-              class="layout__tab-close"
-              [attr.aria-label]="'nodeEditor.closeTabAria' | translate"
-              [matTooltip]="'nodeEditor.closeTabTooltip' | translate"
-              (click)="closeDiagram(diagram.id, $event)"
-              >
-              <mat-icon>close</mat-icon>
-            </button>
-          }
-        </div>
-      }
-
-      <span class="layout__tabs-spacer"></span>
-
-      <button
-        mat-icon-button
-        type="button"
-        class="properties-toggle-btn properties-toggle-btn--tabs"
-        (click)="toggleProperties()"
-      [matTooltip]="
-        propertiesOpened()
-          ? ('nodeEditor.propertiesHideTooltip' | translate)
-          : ('nodeEditor.propertiesShowTooltip' | translate)
-      "
-        [attr.aria-label]="'nodeEditor.propertiesToggleAria' | translate"
-        >
-        <mat-icon>{{ propertiesOpened() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
-      </button>
-    </div>
-
-    <mat-sidenav-container class="layout__sidenav-container" [hasBackdrop]="false">
-      <mat-sidenav
-        mode="side"
-        position="end"
-        [opened]="propertiesOpened()"
-        (openedChange)="propertiesOpened.set($event)"
-        class="layout__properties-sidenav"
-        [attr.aria-label]="'nodeEditor.propertiesAria' | translate"
-        >
-        <div class="layout__properties">
-          <div class="layout__properties-head">
-            <h2 class="layout__properties-title">{{ 'nodeEditor.propertiesTitle' | translate }}</h2>
-            <p class="layout__properties-hint mat-caption">
-              {{ 'nodeEditor.propertiesHint' | translate }}
-            </p>
-          </div>
-
-          <mat-card class="props-mat-card">
-            <mat-card-subtitle>{{ 'nodeEditor.selectedElement' | translate }}</mat-card-subtitle>
-            <mat-card-content>
-              <p class="props-muted">{{ 'nodeEditor.selectNode' | translate }}</p>
-            </mat-card-content>
-          </mat-card>
-
-          <mat-card class="props-mat-card">
-            <mat-card-content class="props-mat-form-stack">
-              <mat-form-field appearance="outline" class="props-mat-field">
-                <mat-label>{{ 'nodeEditor.displayName' | translate }}</mat-label>
-                <input
-                  matInput
-                  readonly
-                  [placeholder]="'nodeEditor.displayNamePlaceholder' | translate"
-                  tabindex="-1"
-                  />
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" class="props-mat-field props-mat-field--mono">
-                  <mat-label>{{ 'nodeEditor.tagId' | translate }}</mat-label>
-                  <input
-                    matInput
-                    name="mockTagId"
-                    readonly
-                    [(ngModel)]="mockTagId"
-                    tabindex="-1"
-                    />
-                  </mat-form-field>
-
-                  <mat-form-field appearance="outline" class="props-mat-field">
-                    <mat-label>{{ 'nodeEditor.ratedVoltage' | translate }}</mat-label>
-                    <mat-select [(ngModel)]="mockVoltage" disabled name="mockVoltage">
-                      <mat-option value="154">154 kV</mat-option>
-                      <mat-option value="345">345 kV</mat-option>
-                      <mat-option value="765">765 kV</mat-option>
-                    </mat-select>
-                  </mat-form-field>
-
-                  <mat-form-field appearance="outline" class="props-mat-field">
-                    <mat-label>{{ 'nodeEditor.operatingState' | translate }}</mat-label>
-                    <mat-select [(ngModel)]="mockState" disabled name="mockState">
-                      <mat-option value="normal">{{ 'nodeEditor.stateNormal' | translate }}</mat-option>
-                      <mat-option value="maint">{{ 'nodeEditor.stateMaint' | translate }}</mat-option>
-                      <mat-option value="open">{{ 'nodeEditor.stateOpen' | translate }}</mat-option>
-                    </mat-select>
-                  </mat-form-field>
-
-                  <mat-form-field appearance="outline" class="props-mat-field">
-                    <mat-label>{{ 'nodeEditor.remarks' | translate }}</mat-label>
-                    <textarea
-                      matInput
-                      rows="3"
-                      [placeholder]="'nodeEditor.remarksPlaceholder' | translate"
-                      readonly
-                      tabindex="-1"
-                    ></textarea>
-                  </mat-form-field>
-                </mat-card-content>
-              </mat-card>
-
-              <mat-card class="props-mat-card props-mat-card--chips">
-                <mat-card-content>
-                  <mat-chip-set [attr.aria-label]="'nodeEditor.tagListAria' | translate">
-                    <mat-chip>{{ 'nodeEditor.chipBayGroup' | translate }}</mat-chip>
-                    <mat-chip class="props-mat-chip--outline">{{ 'nodeEditor.chipScada' | translate }}</mat-chip>
-                  </mat-chip-set>
-                </mat-card-content>
-              </mat-card>
-            </div>
-          </mat-sidenav>
-
-          <mat-sidenav-content class="layout__sidenav-content">
-            <section class="layout__workspace">
-              @for (diagram of diagrams(); track trackByDiagramId($index, diagram)) {
-                <app-diagram-workspace
-                  [diagramId]="diagram.id"
-                  [diagramName]="diagram.name"
-                  [pendingImportCells]="pendingCellsForDiagram(diagram.id)"
-                  (pendingImportConsumed)="onPendingImportConsumed($event)"
-                  (importToNewTab)="onImportToNewTab($event)"
-                  (saveSessionRequested)="saveAllTabsToIndexDB()"
-                  [class.layout__workspace-item--hidden]="diagram.id !== activeDiagramId()"
-                ></app-diagram-workspace>
-              }
-            </section>
-          </mat-sidenav-content>
-        </mat-sidenav-container>
+            <mat-icon>close</mat-icon>
+          </button>
+        }
       </div>
+    }
+  </div>
+
+  <section class="layout__workspace">
+    @for (diagram of diagrams(); track trackByDiagramId($index, diagram)) {
+      <app-diagram-workspace
+        [diagramId]="diagram.id"
+        [diagramName]="diagram.name"
+        [pendingImportCells]="pendingCellsForDiagram(diagram.id)"
+        (pendingImportConsumed)="onPendingImportConsumed($event)"
+        (importToNewTab)="onImportToNewTab($event)"
+        (saveSessionRequested)="saveAllTabsToIndexDB()"
+        [class.layout__workspace-item--hidden]="diagram.id !== activeDiagramId()"
+      ></app-diagram-workspace>
+    }
+  </section>
+</div>

@@ -13,16 +13,8 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatOptionModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslateModule } from '@ngx-translate/core';
@@ -46,16 +38,8 @@ import { SldIoMessageService } from '../sld-io-message/sld-io-message.service';
   standalone: true,
   imports: [
     TranslateModule,
-    FormsModule,
     MatButtonModule,
-    MatCardModule,
-    MatChipsModule,
-    MatFormFieldModule,
     MatIconModule,
-    MatInputModule,
-    MatOptionModule,
-    MatSelectModule,
-    MatSidenavModule,
     MatTooltipModule,
     DiagramWorkspaceComponent,
     SldIoMessageComponent,
@@ -167,19 +151,11 @@ export class NodeEditorComponent implements OnInit {
     }
   }
 
-  /** Properties 패널 목업용 (도메인 연동 없음) */
-  mockVoltage = '345';
-  mockState = 'normal';
-  mockTagId = 'SLD-BUS-001';
-
   readonly diagrams = signal<{ id: string; name: string }[]>([
     { id: 'sld-1', name: 'SLD 1' },
   ]);
   readonly activeDiagramId = signal(this.diagrams()[0].id);
   private nextDiagramIndex = 2;
-
-  /** Material sidenav `opened` — Properties 패널 표시 여부 */
-  readonly propertiesOpened = signal(true);
 
   /** pendingImportCells는 탭별로 다중 지원 */
   private readonly pendingImports = signal<Record<string, object[]>>({});
@@ -212,10 +188,6 @@ export class NodeEditorComponent implements OnInit {
       this.activeDiagramId.set(pick.id);
     }
     this.diagrams.set(next);
-  }
-
-  toggleProperties(): void {
-    this.propertiesOpened.update((v) => !v);
   }
 
   async saveAllTabsToIndexDB(): Promise<void> {

@@ -83,28 +83,6 @@
           mat-flat-button
           class="workspace__action-btn"
           type="button"
-          (click)="groupSelected()"
-          [matTooltip]="'workspace.groupTooltip' | translate"
-          >
-          <mat-icon>folder_open</mat-icon>
-          {{ 'workspace.group' | translate }}
-        </button>
-
-        <button
-          mat-flat-button
-          class="workspace__action-btn"
-          type="button"
-          (click)="ungroupSelected()"
-          [matTooltip]="'workspace.ungroupTooltip' | translate"
-          >
-          <mat-icon>folder_off</mat-icon>
-          {{ 'workspace.ungroup' | translate }}
-        </button>
-
-        <button
-          mat-flat-button
-          class="workspace__action-btn"
-          type="button"
           (click)="saveSessionRequested.emit()"
           [matTooltip]="'workspace.saveTooltip' | translate"
           >
@@ -129,16 +107,7 @@
     <div class="workspace__body">
       <div class="workspace__stencil" [attr.aria-label]="'workspace.stencilAria' | translate">
         <div class="workspace__stencil-title">{{ 'workspace.stencilTitle' | translate }}</div>
-        @for (item of paletteItems; track item.type) {
-          <button
-            mat-stroked-button
-            class="workspace__stencil-item"
-            type="button"
-            (click)="addFromPalette(item.type, item.template ?? false)"
-          >
-            {{ item.labelKey | translate }}
-          </button>
-        }
+        <app-diagram-palette [items]="paletteModel"></app-diagram-palette>
       </div>
 
       <ng-diagram
@@ -147,10 +116,10 @@
         [attr.aria-label]="'workspace.canvasAria' | translate"
         [model]="model"
         [config]="diagramConfig"
-        [nodeTemplateMap]="nodeTemplateMap"
         (selectionChanged)="onSelectionChanged()"
         (diagramInit)="onDiagramInit()"
       >
+        <ng-diagram-background></ng-diagram-background>
         <ng-diagram-minimap
           position="bottom-right"
           [width]="220"
