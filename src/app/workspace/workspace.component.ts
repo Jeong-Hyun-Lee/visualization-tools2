@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import type { Model, NgDiagramConfig, Node, NgDiagramPaletteItem } from 'ng-diagram';
 import {
   initializeModelAdapter,
@@ -31,10 +38,15 @@ type DemoNodeData = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WorkspaceComponent {
+  readonly interactionMode = signal<'select' | 'pan'>('select');
   private modelService = inject(NgDiagramModelService);
   private diagramService = inject(NgDiagramService);
   private viewportService = inject(NgDiagramViewportService);
   private selectionService = inject(NgDiagramSelectionService);
+  private spacePanningActive = signal(false);
+  readonly isPanActive = computed(
+    () => this.spacePanningActive() || this.interactionMode() === 'pan',
+  );
 
   readonly selectedNode = computed(
     () => this.selectionService.selection().nodes[0] ?? null,
@@ -59,6 +71,8 @@ export class WorkspaceComponent {
         padding: [28, 320, 28, 280],
       },
     },
+    viewportPanningEnabled: false,
+    nodeDraggingEnabled: true,
   };
 
   model = initializeModelAdapter(
@@ -97,6 +111,14 @@ export class WorkspaceComponent {
     }
   }
 
+  setInteractionMode(mode: 'select' | 'pan'): void {
+    if (this.interactionMode() === mode) {
+      return;
+    }
+    this.interactionMode.set(mode);
+    this.applyInteractionMode();
+  }
+
   private async resetDiagramToDefault() {
     const nodeIds = this.modelService.nodes().map((node) => node.id);
     const edgeIds = this.modelService.edges().map((edge) => edge.id);
@@ -117,6 +139,48 @@ export class WorkspaceComponent {
 
   private generateId(): string {
     return crypto.randomUUID();
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  onWindowKeydown(event: KeyboardEvent): void {
+    if (event.code !== 'Space' && event.key !== ' ') {
+      return;
+    }
+    if (event.repeat || this.spacePanningActive()) {
+      return;
+    }
+    event.preventDefault();
+    this.toggleSpacePanning(true);
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  onWindowKeyup(event: KeyboardEvent): void {
+    if (event.code !== 'Space' && event.key !== ' ') {
+      return;
+    }
+    event.preventDefault();
+    this.toggleSpacePanning(false);
+  }
+
+  @HostListener('window:blur')
+  onWindowBlur(): void {
+    this.toggleSpacePanning(false);
+  }
+
+  private toggleSpacePanning(active: boolean): void {
+    if (this.spacePanningActive() === active) {
+      return;
+    }
+    this.spacePanningActive.set(active);
+    this.applyInteractionMode();
+  }
+
+  private applyInteractionMode(): void {
+    const panActive = this.isPanActive();
+    this.diagramService.updateConfig({
+      viewportPanningEnabled: panActive,
+      nodeDraggingEnabled: !panActive,
+    });
   }
 
   private getDefaultModel(): Model {

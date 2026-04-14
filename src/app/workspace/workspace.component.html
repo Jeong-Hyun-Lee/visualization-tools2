@@ -1,4 +1,4 @@
-<div class="workspace">
+<div class="workspace" [class.workspace--space-panning]="isPanActive()">
   <aside class="workspace__palette">
     <div class="workspace__panel-title">Shapes</div>
     <div class="workspace__palette-list">
@@ -17,6 +17,18 @@
     <div class="workspace__topbar">
       <div class="workspace__title">Diagram</div>
       <div class="workspace__actions">
+        <button
+          [class.active]="interactionMode() === 'select'"
+          (click)="setInteractionMode('select')"
+        >
+          Select
+        </button>
+        <button
+          [class.active]="interactionMode() === 'pan'"
+          (click)="setInteractionMode('pan')"
+        >
+          Hand
+        </button>
         <button (click)="addNode()">Add Node</button>
         <button class="secondary" (click)="reset()">Reset</button>
       </div>
