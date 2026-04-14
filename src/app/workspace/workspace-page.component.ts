@@ -1,13 +1,13 @@
 import '@angular/compiler';
 import { Component } from '@angular/core';
 import { provideNgDiagram } from 'ng-diagram';
-import { DiagramComponent } from './diagram.component';
+import { WorkspaceComponent } from './workspace.component';
 
 @Component({
   standalone: true,
-  imports: [DiagramComponent],
+  imports: [WorkspaceComponent],
   providers: [provideNgDiagram()],
-  template: `<diagram />`,
+  template: `<app-workspace />`,
   styles: `
     :host {
       display: block;
@@ -16,4 +16,4 @@ import { DiagramComponent } from './diagram.component';
     }
   `,
 })
-export class DiagramWrapperComponent {}
+export class WorkspacePageComponent {}

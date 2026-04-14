@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
 
-import { DiagramWrapperComponent } from './example/diagram-wrapper.component';
+import { WorkspacePageComponent } from './workspace/workspace-page.component';
 
 export const appRoutes: Routes = [
-  { path: '', pathMatch: 'full', component: DiagramWrapperComponent },
-  { path: 'example', component: DiagramWrapperComponent },
+  { path: '', pathMatch: 'full', component: WorkspacePageComponent },
+  { path: 'workspace', component: WorkspacePageComponent },
   { path: '**', redirectTo: '' },
 ];

@@ -2,20 +2,20 @@
   display: block;
   height: 100%;
   min-height: 0;
-  --example-bg: #f3f5f9;
-  --example-panel-bg: #ffffff;
-  --example-panel-border: #d9deea;
-  --example-panel-shadow: 0 8px 26px rgba(15, 23, 42, 0.08);
-  --example-text-primary: #0f172a;
-  --example-text-muted: #64748b;
-  --example-button-bg: #f8fafc;
-  --example-button-hover-bg: #e2e8f0;
-  --example-button-color: #1e293b;
-  --example-button-border: #cbd5e1;
-  --example-secondary-bg: #e2e8f0;
-  --example-secondary-color: #334155;
-  --example-secondary-border: #cbd5e1;
-  --example-accent: #4f46e5;
+  --workspace-bg: #f3f5f9;
+  --workspace-panel-bg: #ffffff;
+  --workspace-panel-border: #d9deea;
+  --workspace-panel-shadow: 0 8px 26px rgba(15, 23, 42, 0.08);
+  --workspace-text-primary: #0f172a;
+  --workspace-text-muted: #64748b;
+  --workspace-button-bg: #f8fafc;
+  --workspace-button-hover-bg: #e2e8f0;
+  --workspace-button-color: #1e293b;
+  --workspace-button-border: #cbd5e1;
+  --workspace-secondary-bg: #e2e8f0;
+  --workspace-secondary-color: #334155;
+  --workspace-secondary-border: #cbd5e1;
+  --workspace-accent: #4f46e5;
 }
 
 .workspace {
@@ -24,7 +24,7 @@
   gap: 12px;
   height: 100%;
   min-height: 0;
-  background: var(--example-bg);
+  background: var(--workspace-bg);
   padding: 12px;
   box-sizing: border-box;
 }
@@ -33,10 +33,10 @@
 .workspace__sidebar {
   display: flex;
   flex-direction: column;
-  background: var(--example-panel-bg);
-  border: 1px solid var(--example-panel-border);
+  background: var(--workspace-panel-bg);
+  border: 1px solid var(--workspace-panel-border);
   border-radius: 12px;
-  box-shadow: var(--example-panel-shadow);
+  box-shadow: var(--workspace-panel-shadow);
   min-height: 0;
   padding: 12px;
 }
@@ -45,7 +45,7 @@
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--example-text-muted);
+  color: var(--workspace-text-muted);
   font-weight: 700;
   margin-bottom: 10px;
 }
@@ -58,11 +58,11 @@
 }
 
 .palette-item {
-  background: var(--example-button-bg);
-  border: 1px solid var(--example-button-border);
+  background: var(--workspace-button-bg);
+  border: 1px solid var(--workspace-button-border);
   border-radius: 10px;
   padding: 10px 12px;
-  color: var(--example-text-primary);
+  color: var(--workspace-text-primary);
   font-weight: 600;
   cursor: grab;
   user-select: none;
@@ -79,14 +79,14 @@
   flex-direction: column;
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid var(--example-panel-border);
-  box-shadow: var(--example-panel-shadow);
-  background: var(--example-panel-bg);
+  border: 1px solid var(--workspace-panel-border);
+  box-shadow: var(--workspace-panel-shadow);
+  background: var(--workspace-panel-bg);
 }
 
 .workspace__topbar {
   height: 52px;
-  border-bottom: 1px solid var(--example-panel-border);
+  border-bottom: 1px solid var(--workspace-panel-border);
   padding: 0 12px;
   display: flex;
   align-items: center;
@@ -94,7 +94,7 @@
 }
 
 .workspace__title {
-  color: var(--example-text-primary);
+  color: var(--workspace-text-primary);
   font-weight: 700;
 }
 
@@ -104,9 +104,9 @@
 }
 
 .workspace__actions button {
-  background: var(--example-button-bg);
-  color: var(--example-button-color);
-  border: 1px solid var(--example-button-border);
+  background: var(--workspace-button-bg);
+  color: var(--workspace-button-color);
+  border: 1px solid var(--workspace-button-border);
   border-radius: 8px;
   padding: 0.35rem 0.7rem;
   font-weight: 600;
@@ -114,13 +114,13 @@
 }
 
 .workspace__actions button:hover {
-  background: var(--example-button-hover-bg);
+  background: var(--workspace-button-hover-bg);
 }
 
 .workspace__actions .secondary {
-  background: var(--example-secondary-bg);
-  color: var(--example-secondary-color);
-  border-color: var(--example-secondary-border);
+  background: var(--workspace-secondary-bg);
+  color: var(--workspace-secondary-color);
+  border-color: var(--workspace-secondary-border);
 }
 
 .workspace__canvas {
@@ -141,17 +141,17 @@
 
 .mock-form label {
   font-size: 0.75rem;
-  color: var(--example-text-muted);
+  color: var(--workspace-text-muted);
   font-weight: 600;
 }
 
 .mock-form input,
 .mock-form select {
-  border: 1px solid var(--example-button-border);
+  border: 1px solid var(--workspace-button-border);
   border-radius: 8px;
   padding: 0.45rem 0.55rem;
-  background: var(--example-button-bg);
-  color: var(--example-text-primary);
+  background: var(--workspace-button-bg);
+  color: var(--workspace-text-primary);
 }
 
 .mock-badges {
@@ -164,35 +164,36 @@
   font-size: 0.72rem;
   border-radius: 999px;
   padding: 0.22rem 0.55rem;
-  border: 1px solid color-mix(in srgb, var(--example-accent) 45%, transparent);
-  color: var(--example-accent);
-  background: color-mix(in srgb, var(--example-accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--workspace-accent) 45%, transparent);
+  color: var(--workspace-accent);
+  background: color-mix(in srgb, var(--workspace-accent) 12%, transparent);
 }
 
 @media (max-width: 1280px) {
   .workspace {
     grid-template-columns: 220px minmax(0, 1fr);
   }
+
   .workspace__sidebar {
     display: none;
   }
 }
 
 :host-context(body.theme-dark) {
-  --example-bg: #0f141d;
-  --example-panel-bg: #151d29;
-  --example-panel-border: #263241;
-  --example-panel-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
-  --example-text-primary: #e2e8f0;
-  --example-text-muted: #8ea0b9;
-  --example-button-bg: #1a2431;
-  --example-button-hover-bg: #273447;
-  --example-button-color: #e2e8f0;
-  --example-button-border: #33465d;
-  --example-secondary-bg: #25364b;
-  --example-secondary-color: #dbeafe;
-  --example-secondary-border: #3d5772;
-  --example-accent: #93c5fd;
+  --workspace-bg: #0f141d;
+  --workspace-panel-bg: #151d29;
+  --workspace-panel-border: #263241;
+  --workspace-panel-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+  --workspace-text-primary: #e2e8f0;
+  --workspace-text-muted: #8ea0b9;
+  --workspace-button-bg: #1a2431;
+  --workspace-button-hover-bg: #273447;
+  --workspace-button-color: #e2e8f0;
+  --workspace-button-border: #33465d;
+  --workspace-secondary-bg: #25364b;
+  --workspace-secondary-color: #dbeafe;
+  --workspace-secondary-border: #3d5772;
+  --workspace-accent: #93c5fd;
 }
 
 :host-context(body.theme-dark) ng-diagram {

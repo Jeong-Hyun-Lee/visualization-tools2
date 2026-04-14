@@ -18,7 +18,7 @@ type DemoNodeData = {
 };
 
 @Component({
-  selector: 'diagram',
+  selector: 'app-workspace',
   standalone: true,
   imports: [
     NgDiagramComponent,
@@ -26,11 +26,11 @@ type DemoNodeData = {
     NgDiagramPaletteItemComponent,
     NgDiagramPaletteItemPreviewComponent,
   ],
-  templateUrl: './diagram.component.html',
-  styleUrl: './diagram.component.scss',
+  templateUrl: './workspace.component.html',
+  styleUrl: './workspace.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DiagramComponent {
+export class WorkspaceComponent {
   private modelService = inject(NgDiagramModelService);
   private diagramService = inject(NgDiagramService);
   private viewportService = inject(NgDiagramViewportService);
@@ -39,7 +39,6 @@ export class DiagramComponent {
   readonly selectedNode = computed(
     () => this.selectionService.selection().nodes[0] ?? null,
   );
-  readonly hasSelectedNode = computed(() => this.selectedNode() !== null);
   readonly selectedNodeLabel = computed(() => {
     const data = this.selectedNode()?.data as DemoNodeData | undefined;
     return data?.label ?? 'Unknown Node';
@@ -103,9 +102,6 @@ export class DiagramComponent {
     const edgeIds = this.modelService.edges().map((edge) => edge.id);
     const defaultModel = this.getDefaultModel();
 
-    // This works because default model IDs are unique (generated via crypto.randomUUID).
-    // Be aware of ID collision pitfalls when mixing delete + add in a single transaction:
-    // https://www.ngdiagram.dev/docs/guides/transactions/#how-transactions-work
     await this.diagramService.transaction(
       () => {
         this.modelService.deleteNodes(nodeIds);

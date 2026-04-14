@@ -13,7 +13,6 @@ export class LocalStorageModelAdapter implements ModelAdapter {
     private readonly storageKey: string = 'ng-diagram-data',
     initialData?: Partial<Model>,
   ) {
-    // Initialize storage if it doesn't exist
     if (!localStorage.getItem(this.storageKey)) {
       const defaultData = {
         nodes: initialData?.nodes || [],
@@ -26,7 +25,6 @@ export class LocalStorageModelAdapter implements ModelAdapter {
     }
   }
 
-  // Core data access methods - read directly from localStorage
   getNodes(): Node[] {
     const data = this.getStorageData();
     return data.nodes || [];
@@ -42,7 +40,6 @@ export class LocalStorageModelAdapter implements ModelAdapter {
     return data.metadata || { viewport: { x: 0, y: 0, scale: 1 } };
   }
 
-  // Data modification methods - write directly to localStorage
   updateNodes(next: Node[] | ((prev: Node[]) => Node[])): void {
     const currentNodes = this.getNodes();
     const newNodes = typeof next === 'function' ? next(currentNodes) : next;
@@ -65,7 +62,6 @@ export class LocalStorageModelAdapter implements ModelAdapter {
     this.notifyCallbacks();
   }
 
-  // Change notification system
   onChange(callback: (data: ModelChanges) => void): void {
     this.callbacks.push(callback);
   }
@@ -74,7 +70,6 @@ export class LocalStorageModelAdapter implements ModelAdapter {
     this.callbacks = this.callbacks.filter((cb) => cb !== callback);
   }
 
-  // History management (simplified implementation)
   undo(): void {
     console.log('Undo operation - implement based on your requirements');
   }
@@ -83,17 +78,14 @@ export class LocalStorageModelAdapter implements ModelAdapter {
     console.log('Redo operation - implement based on your requirements');
   }
 
-  // Serialization
   toJSON(): string {
     return JSON.stringify(this.getStorageData());
   }
 
-  // Cleanup
   destroy(): void {
     this.callbacks = [];
   }
 
-  // Private storage methods
   private getStorageData(): ModelChanges {
     try {
       const stored = localStorage.getItem(this.storageKey);
