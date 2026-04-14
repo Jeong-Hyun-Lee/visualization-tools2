@@ -32,8 +32,6 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/@antv/x6/dist/index.css",
-              "./node_modules/@antv/x6-plugin-transform/dist/index.css",
               "src/styles.scss"
             ],
             "allowedCommonJsDependencies": [
@@ -93,23 +91,9 @@
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@analogjs/vitest-angular:test",
           "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.spec.json",
-            "karmaConfig": "karma.conf.js",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "./node_modules/@antv/x6/dist/index.css",
-              "./node_modules/@antv/x6-plugin-transform/dist/index.css",
-              "src/styles.scss"
-            ],
-            "scripts": []
+            "config": "vite.config.mts"
           }
         }
       }

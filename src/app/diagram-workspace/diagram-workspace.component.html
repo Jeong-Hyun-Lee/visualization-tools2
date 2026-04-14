@@ -127,24 +127,36 @@
     </mat-toolbar>
 
     <div class="workspace__body">
-      <div
-        #stencilHost
-        class="workspace__stencil"
-        [attr.aria-label]="'workspace.stencilAria' | translate"
-      ></div>
+      <div class="workspace__stencil" [attr.aria-label]="'workspace.stencilAria' | translate">
+        <div class="workspace__stencil-title">{{ 'workspace.stencilTitle' | translate }}</div>
+        @for (item of paletteItems; track item.type) {
+          <button
+            mat-stroked-button
+            class="workspace__stencil-item"
+            type="button"
+            (click)="addFromPalette(item.type, item.template ?? false)"
+          >
+            {{ item.labelKey | translate }}
+          </button>
+        }
+      </div>
 
-      <div
-        #graphHost
+      <ng-diagram
         class="workspace__canvas"
         role="application"
         [attr.aria-label]="'workspace.canvasAria' | translate"
-      ></div>
+        [model]="model"
+        [config]="diagramConfig"
+        [nodeTemplateMap]="nodeTemplateMap"
+        (selectionChanged)="onSelectionChanged()"
+        (diagramInit)="onDiagramInit()"
+      >
+        <ng-diagram-minimap
+          position="bottom-right"
+          [width]="220"
+          [height]="140"
+          [showZoomControls]="true"
+        ></ng-diagram-minimap>
+      </ng-diagram>
     </div>
-
-    @if (stencilError) {
-      <div class="workspace__error">
-        {{ stencilError }}
-      </div>
-    }
-    <div #minimapHost class="workspace__minimap" [attr.aria-label]="'workspace.minimapAria' | translate"></div>
   </div>
