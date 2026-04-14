@@ -1,8 +1,9 @@
-<div
-  class="sld-io-message"
-  [class.sld-io-message--error]="state.variant === 'error'"
-  *ngIf="io.state$ | async as state"
-  [attr.role]="state.variant === 'error' ? 'alert' : 'status'"
->
-  {{ state.text }}
-</div>
+@if (io.state(); as state) {
+  <div
+    class="sld-io-message"
+    [class.sld-io-message--error]="state.variant === 'error'"
+    [attr.role]="state.variant === 'error' ? 'alert' : 'status'"
+    >
+    {{ state.text }}
+  </div>
+}

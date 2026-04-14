@@ -79,47 +79,17 @@ main {
 }
 
 /* Settings와 동일 형태, 배경만 흰색 — 텍스트/아이콘은 primary(인디고) 유지 */
-.app-toolbar__action--new-diagram.mat-flat-button {
+.app-toolbar__action--new-diagram {
   color: #3f51b5;
   background-color: #fff;
   border: 1px solid #dbe3ff;
 }
 
-.app-toolbar__action--new-diagram.mat-flat-button:hover {
+.app-toolbar__action--new-diagram:hover {
   background-color: #f8fafc;
 }
 
-.app-toolbar__action--new-diagram.mat-flat-button .mat-button-focus-overlay {
-  background-color: rgba(63, 81, 181, 0.08);
-}
-
-::ng-deep .app-settings-menu {
-  .app-settings-menu__heading {
-    min-height: 36px;
-    line-height: 36px;
-    opacity: 1;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: #64748b;
-    cursor: default;
-    background: transparent;
-  }
-
-  .mat-menu-item .mat-icon {
-    margin-right: 0.5rem;
-    width: 20px;
-    height: 20px;
-    font-size: 20px;
-    color: #3f51b5;
-  }
-}
-
-body.theme-dark ::ng-deep .app-settings-menu .mat-menu-item .mat-icon {
-  color: #9fa8da;
-}
-
-body.theme-dark ::ng-deep .app-settings-menu .app-settings-menu__heading {
-  color: #94a3b8;
+.app-toolbar__action--new-diagram:focus-visible {
+  outline: 2px solid rgba(63, 81, 181, 0.35);
+  outline-offset: 2px;
 }

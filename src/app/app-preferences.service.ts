@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable, effect, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 export type AppTheme = 'light' | 'dark';
 export type AppLanguage = 'ko' | 'en';
@@ -9,40 +9,41 @@ const LANG_KEY = 'ge-vernova-lang';
 
 @Injectable({ providedIn: 'root' })
 export class AppPreferencesService {
-  private readonly themeSubject = new BehaviorSubject<AppTheme>(
-    this.readStoredTheme(),
-  );
-  private readonly languageSubject = new BehaviorSubject<AppLanguage>(
-    this.readStoredLanguage(),
-  );
+  private readonly themeSignal = signal<AppTheme>(this.readStoredTheme());
+  private readonly languageSignal = signal<AppLanguage>(this.readStoredLanguage());
 
-  readonly theme$ = this.themeSubject.asObservable();
-  readonly language$ = this.languageSubject.asObservable();
+  readonly themeState = this.themeSignal.asReadonly();
+  readonly languageState = this.languageSignal.asReadonly();
+  readonly theme$ = toObservable(this.themeState);
+  readonly language$ = toObservable(this.languageState);
+
+  constructor() {
+    effect(() => this.applyTheme(this.themeSignal()));
+    effect(() => this.applyLanguage(this.languageSignal()));
+  }
 
   get theme(): AppTheme {
-    return this.themeSubject.value;
+    return this.themeSignal();
   }
 
   get language(): AppLanguage {
-    return this.languageSubject.value;
+    return this.languageSignal();
   }
 
-  /** 앱 부트 시 document/body 반영 */
+  /** 호환성 유지를 위한 no-op (effect가 즉시 반영). */
   syncDom(): void {
-    this.applyTheme(this.theme);
-    this.applyLanguage(this.language);
+    this.applyTheme(this.themeSignal());
+    this.applyLanguage(this.languageSignal());
   }
 
   setTheme(theme: AppTheme): void {
     localStorage.setItem(THEME_KEY, theme);
-    this.themeSubject.next(theme);
-    this.applyTheme(theme);
+    this.themeSignal.set(theme);
   }
 
   setLanguage(lang: AppLanguage): void {
     localStorage.setItem(LANG_KEY, lang);
-    this.languageSubject.next(lang);
-    this.applyLanguage(lang);
+    this.languageSignal.set(lang);
   }
 
   private readStoredTheme(): AppTheme {

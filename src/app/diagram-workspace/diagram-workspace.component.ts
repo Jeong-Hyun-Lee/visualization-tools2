@@ -3,10 +3,12 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   ElementRef,
   EventEmitter,
   HostListener,
   Input,
+  inject,
   NgZone,
   OnChanges,
   OnDestroy,
@@ -14,9 +16,13 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { TranslateModule } from '@ngx-translate/core';
 import { Edge, Graph, Node } from '@antv/x6';
 import { History } from '@antv/x6-plugin-history';
 import { Keyboard } from '@antv/x6-plugin-keyboard';
@@ -97,6 +103,8 @@ interface FileSystemWritableLike {
   templateUrl: './diagram-workspace.component.html',
   styleUrls: ['./diagram-workspace.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [TranslateModule, MatToolbarModule, MatButtonModule, MatIconModule, MatTooltipModule],
 })
 export class DiagramWorkspaceComponent
   implements AfterViewInit, OnDestroy, OnChanges
@@ -138,7 +146,7 @@ export class DiagramWorkspaceComponent
   stencilError: string | null = null;
 
   private spaceDown = false;
-  private readonly destroy$ = new Subject<void>();
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(
     private readonly cdr: ChangeDetectorRef,
@@ -157,7 +165,7 @@ export class DiagramWorkspaceComponent
     this.loadStencil();
 
     this.translate.onLangChange
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.ngZone.run(() => this.rebuildStencil());
       });
@@ -178,9 +186,6 @@ export class DiagramWorkspaceComponent
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-
     this.stencil?.dispose();
     this.stencil = undefined;
 

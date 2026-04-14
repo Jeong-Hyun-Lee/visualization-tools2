@@ -32,7 +32,6 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "./node_modules/@antv/x6/dist/index.css",
               "./node_modules/@antv/x6-plugin-transform/dist/index.css",
               "src/styles.scss"
@@ -79,10 +78,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "ng-vernova:build:production"
+              "buildTarget": "ng-vernova:build:production"
             },
             "development": {
-              "browserTarget": "ng-vernova:build:development"
+              "buildTarget": "ng-vernova:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -90,7 +89,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "ng-vernova:build"
+            "buildTarget": "ng-vernova:build"
           }
         },
         "test": {
@@ -106,7 +105,6 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "./node_modules/@antv/x6/dist/index.css",
               "./node_modules/@antv/x6-plugin-transform/dist/index.css",
               "src/styles.scss"
@@ -115,6 +113,32 @@
           }
         }
       }
+    }
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "type": "component"
+    },
+    "@schematics/angular:directive": {
+      "type": "directive"
+    },
+    "@schematics/angular:service": {
+      "type": "service"
+    },
+    "@schematics/angular:guard": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:interceptor": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:module": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:pipe": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:resolver": {
+      "typeSeparator": "."
     }
   }
 }

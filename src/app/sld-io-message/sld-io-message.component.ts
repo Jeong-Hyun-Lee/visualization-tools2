@@ -7,6 +7,7 @@ import { SldIoMessageService } from './sld-io-message.service';
   templateUrl: './sld-io-message.component.html',
   styleUrls: ['./sld-io-message.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class SldIoMessageComponent {
   constructor(readonly io: SldIoMessageService) {}

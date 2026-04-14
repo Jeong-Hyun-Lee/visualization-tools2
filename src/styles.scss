@@ -1,27 +1,50 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+$light-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$violet-palette,
+    tertiary: mat.$blue-palette,
+  ),
+  density: (
+    scale: 0,
+  ),
+));
+
+$dark-theme: mat.define-theme((
+  color: (
+    theme-type: dark,
+    primary: mat.$violet-palette,
+    tertiary: mat.$blue-palette,
+  ),
+  density: (
+    scale: 0,
+  ),
+));
+
+@include mat.core();
+@include mat.all-component-themes($light-theme);
 
 html,
 body {
   height: 100%;
 }
+
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
   background: #fafafa;
-  color: rgba(0, 0, 0, 0.87);
+  color: #111827;
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
 }
 
-/* 다크 테마 — Material prebuilt은 그대로 두고 앱 셸·편집 영역만 보조 조정 */
 body.theme-dark {
+  @include mat.all-component-colors($dark-theme);
+  color-scheme: dark;
   background: #1a1a1a;
-  color: rgba(255, 255, 255, 0.87);
-}
-
-body.theme-dark .mat-app-background {
-  background: #1a1a1a;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 body.theme-dark app-root .app-toolbar {
@@ -39,10 +62,6 @@ body.theme-dark app-root .app-toolbar__chip {
   background: rgba(63, 81, 181, 0.35);
 }
 
-body.theme-dark app-root .app-toolbar__logo {
-  color: #93c5fd;
-}
-
 body.theme-dark app-root .app-toolbar__action {
   color: #e2e8f0;
   background: #3a3a42;
@@ -51,33 +70,6 @@ body.theme-dark app-root .app-toolbar__action {
 
 body.theme-dark app-root .app-toolbar__action:hover {
   background: #4a4a52;
-}
-
-body.theme-dark app-root .app-toolbar__action--new-diagram.mat-flat-button {
-  color: #9fa8da;
-  background-color: #2d2d33;
-  border-color: rgba(159, 168, 218, 0.35);
-}
-
-body.theme-dark
-  app-root
-  .app-toolbar__action--new-diagram.mat-flat-button:hover {
-  background-color: #36363e;
-}
-
-/* 다크: Material 비활성 flat/stroked — 기본 검은색 계열 대신 읽기 쉬운 회색 */
-body.theme-dark .mat-flat-button.mat-button-disabled,
-body.theme-dark .mat-flat-button[disabled],
-body.theme-dark .mat-stroked-button.mat-button-disabled,
-body.theme-dark .mat-stroked-button[disabled] {
-  color: rgba(126, 130, 134, 0.78) !important;
-}
-
-body.theme-dark .mat-flat-button.mat-button-disabled .mat-icon,
-body.theme-dark .mat-flat-button[disabled] .mat-icon,
-body.theme-dark .mat-stroked-button.mat-button-disabled .mat-icon,
-body.theme-dark .mat-stroked-button[disabled] .mat-icon {
-  color: rgba(126, 130, 134, 0.78) !important;
 }
 
 body.theme-dark app-node-editor .layout {
@@ -110,89 +102,18 @@ body.theme-dark app-node-editor .layout__properties-sidenav {
 
 body.theme-dark app-node-editor .layout__properties {
   color: rgba(255, 255, 255, 0.9);
-
-  .layout__properties-hint,
-  .layout__properties-head .mat-caption {
-    color: #94a3b8 !important;
-  }
-
-  .layout__properties-title {
-    color: #f1f5f9;
-  }
-
-  .mat-card-content {
-    color: rgba(255, 255, 255, 0.87);
-  }
-
-  /* outline 폼 필드 — 라벨·입력·테두리 */
-  .mat-form-field-appearance-outline .mat-form-field-label,
-  .mat-form-field:not(.mat-focused):not(.mat-form-field-invalid)
-    .mat-form-field-label {
-    color: rgba(255, 255, 255, 0.65);
-  }
-
-  .mat-form-field.mat-focused .mat-form-field-label {
-    color: #c5cae9;
-  }
-
-  .mat-form-field-appearance-outline .mat-form-field-outline {
-    color: rgba(255, 255, 255, 0.28);
-  }
-
-  .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
-    color: #9fa8da;
-  }
-
-  .mat-form-field-appearance-outline.mat-form-field-disabled
-    .mat-form-field-outline {
-    color: rgba(255, 255, 255, 0.14);
-  }
-
-  .mat-input-element,
-  textarea.mat-input-element {
-    color: #f1f5f9;
-    caret-color: #9fa8da;
-  }
-
-  .mat-input-element::placeholder {
-    color: rgba(255, 255, 255, 0.38);
-  }
-
-  .mat-form-field-disabled .mat-input-element {
-    color: rgba(255, 255, 255, 0.55);
-  }
-
-  .mat-select-value,
-  .mat-select-value-text,
-  .mat-select-min-line {
-    color: #f1f5f9;
-  }
-
-  .mat-select-disabled .mat-select-value,
-  .mat-select-disabled .mat-select-value-text {
-    color: rgba(255, 255, 255, 0.52);
-  }
-
-  .mat-select-arrow,
-  .mat-select-disabled .mat-select-arrow {
-    color: rgba(255, 255, 255, 0.45);
-  }
-
-  .mat-chip.mat-standard-chip {
-    background-color: rgba(159, 168, 218, 0.25) !important;
-    color: #e8eaf6 !important;
-  }
-
-  .mat-chip.mat-standard-chip.props-mat-chip--outline {
-    background-color: transparent !important;
-    border: 1px dashed rgba(199, 210, 254, 0.5) !important;
-    color: #c7d2fe !important;
-  }
 }
 
-body.theme-dark app-node-editor .props-muted,
-body.theme-dark app-node-editor .mat-card-subtitle {
-  color: #cbd5e1;
+body.theme-dark app-node-editor .layout__properties .mat-mdc-form-field {
+  --mdc-outlined-text-field-label-text-color: rgba(255, 255, 255, 0.65);
+  --mdc-outlined-text-field-input-text-color: #f1f5f9;
+  --mdc-outlined-text-field-outline-color: rgba(255, 255, 255, 0.28);
+  --mdc-outlined-text-field-hover-outline-color: rgba(255, 255, 255, 0.35);
+  --mdc-outlined-text-field-focus-outline-color: #9fa8da;
+  --mat-select-enabled-arrow-color: rgba(255, 255, 255, 0.45);
+  --mat-select-disabled-arrow-color: rgba(255, 255, 255, 0.45);
+  --mat-select-enabled-trigger-text-color: #f1f5f9;
+  --mat-select-disabled-trigger-text-color: rgba(255, 255, 255, 0.52);
 }
 
 body.theme-dark app-node-editor .props-mat-card {
@@ -201,92 +122,59 @@ body.theme-dark app-node-editor .props-mat-card {
   color: rgba(255, 255, 255, 0.87);
 }
 
-/* 드롭다운 패널은 오버레이라 별도 */
-body.theme-dark .cdk-overlay-container .mat-select-panel {
+body.theme-dark .cdk-overlay-container .mat-mdc-select-panel {
   background: #424242;
 }
 
-body.theme-dark .cdk-overlay-container .mat-select-panel .mat-option {
+body.theme-dark .cdk-overlay-container .mat-mdc-option {
   color: rgba(255, 255, 255, 0.9);
 }
 
-body.theme-dark
-  .cdk-overlay-container
-  .mat-select-panel
-  .mat-option.mat-active {
+body.theme-dark .cdk-overlay-container .mat-mdc-option.mat-mdc-option-active {
   background: rgba(255, 255, 255, 0.08) !important;
 }
 
-body.theme-dark
-  .cdk-overlay-container
-  .mat-select-panel
-  .mat-option.mat-selected:not(.mat-option-multiple) {
+body.theme-dark .cdk-overlay-container .mat-mdc-option.mdc-list-item--selected {
   background: rgba(159, 168, 218, 0.2) !important;
 }
 
-body.theme-dark app-diagram-workspace .workspace {
-  background: #212121;
-}
-
-body.theme-dark app-diagram-workspace .workspace__topbar {
-  background: linear-gradient(180deg, #2d2d2d 0%, #282828 100%);
-  border-bottom-color: rgba(255, 255, 255, 0.08);
-}
-
-body.theme-dark app-diagram-workspace .workspace__title {
-  color: #dbdee0;
-}
-
-body.theme-dark app-diagram-workspace .workspace__action-btn {
-  color: #e2e8f0;
-  background: #3a3a42;
-  border-color: rgba(255, 255, 255, 0.12);
-}
-
-body.theme-dark app-diagram-workspace .workspace__action-btn:hover {
-  background: #4a4a52;
-}
-
-body.theme-dark app-diagram-workspace .workspace__action-btn--danger {
-  color: #fecaca;
-  background: rgba(127, 29, 29, 0.35);
-  border-color: rgba(252, 165, 165, 0.3);
-}
-
-body.theme-dark app-diagram-workspace .workspace__stencil {
-  background: #262626;
-  border-right-color: rgba(255, 255, 255, 0.08);
-}
-
-body.theme-dark app-diagram-workspace .workspace__canvas {
-  background: #c9c9c9;
-  border-left-color: rgba(255, 255, 255, 0.06);
-}
-
-body.theme-dark app-sld-io-message .sld-io-message {
-  background: rgba(16, 185, 129, 0.15);
-  color: #a7f3d0;
-  border-bottom-color: rgba(52, 211, 153, 0.25);
-}
-
-body.theme-dark app-sld-io-message .sld-io-message--error {
-  background: rgba(220, 38, 38, 0.18);
-  color: #fecaca;
-  border-bottom-color: rgba(248, 113, 113, 0.35);
-}
-
-body.theme-dark .mat-menu-panel {
+body.theme-dark .mat-mdc-menu-panel {
   background: #333;
 }
 
-body.theme-dark .mat-menu-item {
+body.theme-dark .mat-mdc-menu-item {
   color: rgba(255, 255, 255, 0.9);
 }
 
-body.theme-dark .mat-menu-item:hover:not([disabled]) {
+body.theme-dark .mat-mdc-menu-item:hover:not([disabled]) {
   background: rgba(255, 255, 255, 0.08);
 }
 
-body.theme-dark .mat-divider {
-  border-top-color: rgba(255, 255, 255, 0.12);
+.app-settings-menu .app-settings-menu__heading {
+  min-height: 36px;
+  line-height: 36px;
+  opacity: 1;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #64748b;
+  cursor: default;
+  background: transparent;
+}
+
+.app-settings-menu .mat-mdc-menu-item .mat-icon {
+  margin-right: 0.5rem;
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  color: #3f51b5;
+}
+
+body.theme-dark .app-settings-menu .mat-mdc-menu-item .mat-icon {
+  color: #9fa8da;
+}
+
+body.theme-dark .app-settings-menu .app-settings-menu__heading {
+  color: #94a3b8;
 }

@@ -1,20 +1,31 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
+  DestroyRef,
   ElementRef,
   HostListener,
-  AfterViewInit,
   NgZone,
-  OnDestroy,
   OnInit,
   QueryList,
   ViewChild,
   ViewChildren,
+  inject,
+  signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { NewDiagramRequestService } from '../new-diagram-request.service';
 import { parseSldImportPayload } from './sld-import-payload';
@@ -24,6 +35,7 @@ import {
   type SldSavedSession,
 } from '../indexdb/sld-session-indexdb';
 import { DiagramWorkspaceComponent } from '../diagram-workspace/diagram-workspace.component';
+import { SldIoMessageComponent } from '../sld-io-message/sld-io-message.component';
 import { SldIoMessageService } from '../sld-io-message/sld-io-message.service';
 
 @Component({
@@ -31,9 +43,26 @@ import { SldIoMessageService } from '../sld-io-message/sld-io-message.service';
   templateUrl: './node-editor.component.html',
   styleUrls: ['./node-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    TranslateModule,
+    FormsModule,
+    MatButtonModule,
+    MatCardModule,
+    MatChipsModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatOptionModule,
+    MatSelectModule,
+    MatSidenavModule,
+    MatTooltipModule,
+    DiagramWorkspaceComponent,
+    SldIoMessageComponent,
+  ],
 })
-export class NodeEditorComponent implements OnInit, OnDestroy {
-  private readonly destroy$ = new Subject<void>();
+export class NodeEditorComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
 
   @ViewChild('globalImportInput', { static: true })
   globalImportInput!: ElementRef<HTMLInputElement>;
@@ -43,7 +72,6 @@ export class NodeEditorComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly newDiagramRequest: NewDiagramRequestService,
-    private readonly cdr: ChangeDetectorRef,
     private readonly ngZone: NgZone,
     private readonly sldIoMessage: SldIoMessageService,
     private readonly translate: TranslateService,
@@ -99,10 +127,9 @@ export class NodeEditorComponent implements OnInit, OnDestroy {
     void this.restoreFromIndexDB();
 
     this.newDiagramRequest.requested$
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.addDiagram();
-        this.cdr.markForCheck();
       });
   }
 
@@ -126,11 +153,10 @@ export class NodeEditorComponent implements OnInit, OnDestroy {
         pending[t.diagramId] = cells;
       }
 
-      this.diagrams = tabs.map((t) => ({ id: t.diagramId, name: t.diagramName }));
-      this.activeDiagramId = tabs[0].diagramId;
-      this.pendingImports = pending;
+      this.diagrams.set(tabs.map((t) => ({ id: t.diagramId, name: t.diagramName })));
+      this.activeDiagramId.set(tabs[0].diagramId);
+      this.pendingImports.set(pending);
       this.nextDiagramIndex = Math.max(this.nextDiagramIndex, maxIdx + 1);
-      this.cdr.markForCheck();
     } catch (err) {
       const detail = err instanceof Error ? err.message : String(err);
       console.error('IndexDB restore failed', err);
@@ -141,67 +167,62 @@ export class NodeEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
   /** Properties 패널 목업용 (도메인 연동 없음) */
   mockVoltage = '345';
   mockState = 'normal';
   mockTagId = 'SLD-BUS-001';
 
-  diagrams: { id: string; name: string }[] = [
+  readonly diagrams = signal<{ id: string; name: string }[]>([
     { id: 'sld-1', name: 'SLD 1' },
-  ];
-  activeDiagramId = this.diagrams[0].id;
+  ]);
+  readonly activeDiagramId = signal(this.diagrams()[0].id);
   private nextDiagramIndex = 2;
 
   /** Material sidenav `opened` — Properties 패널 표시 여부 */
-  propertiesOpened = true;
+  readonly propertiesOpened = signal(true);
 
   /** pendingImportCells는 탭별로 다중 지원 */
-  private pendingImports: Record<string, object[]> = {};
+  private readonly pendingImports = signal<Record<string, object[]>>({});
 
   addDiagram(): void {
     const name = `SLD ${this.nextDiagramIndex}`;
     const id = `sld-${this.nextDiagramIndex}`;
     this.nextDiagramIndex += 1;
-    this.diagrams = [...this.diagrams, { id, name }];
-    this.activeDiagramId = id;
+    this.diagrams.update((prev) => [...prev, { id, name }]);
+    this.activeDiagramId.set(id);
   }
 
   selectDiagram(id: string): void {
-    this.activeDiagramId = id;
+    this.activeDiagramId.set(id);
   }
 
   closeDiagram(id: string, ev: Event): void {
     ev.stopPropagation();
-    if (this.diagrams.length === 1) {
+    const diagrams = this.diagrams();
+    if (diagrams.length === 1) {
       return;
     }
-    const idx = this.diagrams.findIndex((d) => d.id === id);
+    const idx = diagrams.findIndex((d) => d.id === id);
     if (idx < 0) {
       return;
     }
-    const next = this.diagrams.filter((d) => d.id !== id);
-    if (this.activeDiagramId === id) {
+    const next = diagrams.filter((d) => d.id !== id);
+    if (this.activeDiagramId() === id) {
       const pick = next[idx - 1] ?? next[idx] ?? next[0];
-      this.activeDiagramId = pick.id;
+      this.activeDiagramId.set(pick.id);
     }
-    this.diagrams = next;
+    this.diagrams.set(next);
   }
 
   toggleProperties(): void {
-    this.propertiesOpened = !this.propertiesOpened;
-    this.cdr.markForCheck();
+    this.propertiesOpened.update((v) => !v);
   }
 
   async saveAllTabsToIndexDB(): Promise<void> {
     const workspaces = this.workspaces?.toArray() ?? [];
     const wsById = new Map(workspaces.map((w) => [w.diagramId, w]));
 
-    const tabs = this.diagrams
+    const tabs = this.diagrams()
       .map((d) => {
         const ws = wsById.get(d.id);
         const payload = ws?.getExportPayload?.() ?? null;
@@ -245,15 +266,15 @@ export class NodeEditorComponent implements OnInit, OnDestroy {
   }
 
   pendingCellsForDiagram(diagramId: string): object[] | null {
-    return this.pendingImports[diagramId] ?? null;
+    return this.pendingImports()[diagramId] ?? null;
   }
 
   onPendingImportConsumed(ev: { diagramId: string }): void {
-    if (this.pendingImports[ev.diagramId] != null) {
-      const next = { ...this.pendingImports };
+    const pending = this.pendingImports();
+    if (pending[ev.diagramId] != null) {
+      const next = { ...pending };
       delete next[ev.diagramId];
-      this.pendingImports = next;
-      this.cdr.markForCheck();
+      this.pendingImports.set(next);
     }
   }
 
@@ -262,10 +283,9 @@ export class NodeEditorComponent implements OnInit, OnDestroy {
     const tabName = this.tabNameFromFileName(ev.fileName);
     const id = `sld-${this.nextDiagramIndex}`;
     this.nextDiagramIndex += 1;
-    this.pendingImports = { ...this.pendingImports, [id]: ev.cells };
-    this.diagrams = [...this.diagrams, { id, name: tabName }];
-    this.activeDiagramId = id;
-    this.cdr.markForCheck();
+    this.pendingImports.update((prev) => ({ ...prev, [id]: ev.cells }));
+    this.diagrams.update((prev) => [...prev, { id, name: tabName }]);
+    this.activeDiagramId.set(id);
   }
 
   openGlobalImport(): void {
@@ -294,10 +314,9 @@ export class NodeEditorComponent implements OnInit, OnDestroy {
           const tabName = this.tabNameFromFileName(file.name);
           const id = `sld-${this.nextDiagramIndex}`;
           this.nextDiagramIndex += 1;
-          this.pendingImports = { ...this.pendingImports, [id]: cells };
-          this.diagrams = [...this.diagrams, { id, name: tabName }];
-          this.activeDiagramId = id;
-          this.cdr.markForCheck();
+          this.pendingImports.update((prev) => ({ ...prev, [id]: cells }));
+          this.diagrams.update((prev) => [...prev, { id, name: tabName }]);
+          this.activeDiagramId.set(id);
         } catch (err) {
           const detail = err instanceof Error ? err.message : String(err);
           console.error('SLD global import failed', err);
@@ -314,7 +333,6 @@ export class NodeEditorComponent implements OnInit, OnDestroy {
           this.translate.instant('messages.fileReadError'),
           { variant: 'error' },
         );
-        this.cdr.markForCheck();
       });
     };
     reader.readAsText(file, 'utf-8');

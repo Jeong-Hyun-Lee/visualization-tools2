@@ -1,5 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable, NgZone, signal } from '@angular/core';
 
 export type SldIoMessageVariant = 'success' | 'error';
 
@@ -15,10 +14,7 @@ export type ShowSldIoMessageOptions = {
 
 @Injectable({ providedIn: 'root' })
 export class SldIoMessageService {
-  private readonly stateSubject = new BehaviorSubject<SldIoMessageState | null>(
-    null,
-  );
-  readonly state$ = this.stateSubject.asObservable();
+  readonly state = signal<SldIoMessageState | null>(null);
 
   private hideTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -33,9 +29,9 @@ export class SldIoMessageService {
         clearTimeout(this.hideTimer);
         this.hideTimer = null;
       }
-      this.stateSubject.next({ text, variant });
+      this.state.set({ text, variant });
       this.hideTimer = setTimeout(() => {
-        this.stateSubject.next(null);
+        this.state.set(null);
         this.hideTimer = null;
       }, durationMs);
     });

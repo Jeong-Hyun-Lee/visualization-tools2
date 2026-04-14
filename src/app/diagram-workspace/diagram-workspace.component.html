@@ -13,7 +13,7 @@
       class="workspace__topbar-actions"
       role="toolbar"
       [attr.aria-label]="'workspace.editToolsAria' | translate"
-    >
+      >
       <button
         mat-flat-button
         class="workspace__action-btn"
@@ -21,7 +21,7 @@
         (click)="undo()"
         [disabled]="!canUndo()"
         [matTooltip]="'workspace.undoTooltip' | translate"
-      >
+        >
         <mat-icon>undo</mat-icon>
         {{ 'workspace.undo' | translate }}
       </button>
@@ -33,7 +33,7 @@
         (click)="redo()"
         [disabled]="!canRedo()"
         [matTooltip]="'workspace.redoTooltip' | translate"
-      >
+        >
         <mat-icon>redo</mat-icon>
         {{ 'workspace.redo' | translate }}
       </button>
@@ -44,7 +44,7 @@
         type="button"
         (click)="zoomToFit()"
         [matTooltip]="'workspace.zoomFitTooltip' | translate"
-      >
+        >
         <mat-icon>fit_screen</mat-icon>
         {{ 'workspace.zoomFit' | translate }}
       </button>
@@ -55,7 +55,7 @@
         type="button"
         (click)="exportDiagram()"
         [matTooltip]="'workspace.exportTooltip' | translate"
-      >
+        >
         <mat-icon>file_download</mat-icon>
         {{ 'workspace.export' | translate }}
       </button>
@@ -66,7 +66,7 @@
         type="button"
         (click)="openImportFilePicker()"
         [matTooltip]="'workspace.importTooltip' | translate"
-      >
+        >
         <mat-icon>file_upload</mat-icon>
         {{ 'workspace.import' | translate }}
       </button>
@@ -77,72 +77,74 @@
         accept=".json,application/json"
         hidden
         (change)="onImportFileSelected($event)"
-      />
+        />
 
-      <button
-        mat-flat-button
-        class="workspace__action-btn"
-        type="button"
-        (click)="groupSelected()"
-        [matTooltip]="'workspace.groupTooltip' | translate"
-      >
-        <mat-icon>folder_open</mat-icon>
-        {{ 'workspace.group' | translate }}
-      </button>
+        <button
+          mat-flat-button
+          class="workspace__action-btn"
+          type="button"
+          (click)="groupSelected()"
+          [matTooltip]="'workspace.groupTooltip' | translate"
+          >
+          <mat-icon>folder_open</mat-icon>
+          {{ 'workspace.group' | translate }}
+        </button>
 
-      <button
-        mat-flat-button
-        class="workspace__action-btn"
-        type="button"
-        (click)="ungroupSelected()"
-        [matTooltip]="'workspace.ungroupTooltip' | translate"
-      >
-        <mat-icon>folder_off</mat-icon>
-        {{ 'workspace.ungroup' | translate }}
-      </button>
+        <button
+          mat-flat-button
+          class="workspace__action-btn"
+          type="button"
+          (click)="ungroupSelected()"
+          [matTooltip]="'workspace.ungroupTooltip' | translate"
+          >
+          <mat-icon>folder_off</mat-icon>
+          {{ 'workspace.ungroup' | translate }}
+        </button>
 
-      <button
-        mat-flat-button
-        class="workspace__action-btn"
-        type="button"
-        (click)="saveSessionRequested.emit()"
-        [matTooltip]="'workspace.saveTooltip' | translate"
-      >
-        <mat-icon>save</mat-icon>
-        {{ 'workspace.save' | translate }}
-      </button>
+        <button
+          mat-flat-button
+          class="workspace__action-btn"
+          type="button"
+          (click)="saveSessionRequested.emit()"
+          [matTooltip]="'workspace.saveTooltip' | translate"
+          >
+          <mat-icon>save</mat-icon>
+          {{ 'workspace.save' | translate }}
+        </button>
 
-      <button
-        mat-flat-button
-        class="workspace__action-btn workspace__action-btn--danger"
-        type="button"
-        (click)="deleteSelected()"
-        [disabled]="!canDeleteSelection()"
-        [matTooltip]="'workspace.deleteTooltip' | translate"
-      >
-        <mat-icon>delete_outline</mat-icon>
-        {{ 'workspace.delete' | translate }}
-      </button>
+        <button
+          mat-flat-button
+          class="workspace__action-btn workspace__action-btn--danger"
+          type="button"
+          (click)="deleteSelected()"
+          [disabled]="!canDeleteSelection()"
+          [matTooltip]="'workspace.deleteTooltip' | translate"
+          >
+          <mat-icon>delete_outline</mat-icon>
+          {{ 'workspace.delete' | translate }}
+        </button>
+      </div>
+    </mat-toolbar>
+
+    <div class="workspace__body">
+      <div
+        #stencilHost
+        class="workspace__stencil"
+        [attr.aria-label]="'workspace.stencilAria' | translate"
+      ></div>
+
+      <div
+        #graphHost
+        class="workspace__canvas"
+        role="application"
+        [attr.aria-label]="'workspace.canvasAria' | translate"
+      ></div>
     </div>
-  </mat-toolbar>
 
-  <div class="workspace__body">
-    <div
-      #stencilHost
-      class="workspace__stencil"
-      [attr.aria-label]="'workspace.stencilAria' | translate"
-    ></div>
-
-    <div
-      #graphHost
-      class="workspace__canvas"
-      role="application"
-      [attr.aria-label]="'workspace.canvasAria' | translate"
-    ></div>
+    @if (stencilError) {
+      <div class="workspace__error">
+        {{ stencilError }}
+      </div>
+    }
+    <div #minimapHost class="workspace__minimap" [attr.aria-label]="'workspace.minimapAria' | translate"></div>
   </div>
-
-  <div class="workspace__error" *ngIf="stencilError">
-    {{ stencilError }}
-  </div>
-  <div #minimapHost class="workspace__minimap" [attr.aria-label]="'workspace.minimapAria' | translate"></div>
-</div>

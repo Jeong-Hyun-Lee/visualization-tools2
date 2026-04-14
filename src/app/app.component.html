@@ -32,13 +32,13 @@
         {{ 'app.theme' | translate }}
       </button>
       <button mat-menu-item type="button" (click)="onThemeSelect('light')">
-        <mat-icon [style.visibility]="theme === 'light' ? 'visible' : 'hidden'">
+        <mat-icon [style.visibility]="theme() === 'light' ? 'visible' : 'hidden'">
           check
         </mat-icon>
         <span>{{ 'app.light' | translate }}</span>
       </button>
       <button mat-menu-item type="button" (click)="onThemeSelect('dark')">
-        <mat-icon [style.visibility]="theme === 'dark' ? 'visible' : 'hidden'">
+        <mat-icon [style.visibility]="theme() === 'dark' ? 'visible' : 'hidden'">
           check
         </mat-icon>
         <span>{{ 'app.dark' | translate }}</span>
@@ -48,13 +48,13 @@
         {{ 'app.language' | translate }}
       </button>
       <button mat-menu-item type="button" (click)="onLanguageSelect('ko')">
-        <mat-icon [style.visibility]="language === 'ko' ? 'visible' : 'hidden'">
+        <mat-icon [style.visibility]="language() === 'ko' ? 'visible' : 'hidden'">
           check
         </mat-icon>
         <span>{{ 'app.korean' | translate }}</span>
       </button>
       <button mat-menu-item type="button" (click)="onLanguageSelect('en')">
-        <mat-icon [style.visibility]="language === 'en' ? 'visible' : 'hidden'">
+        <mat-icon [style.visibility]="language() === 'en' ? 'visible' : 'hidden'">
           check
         </mat-icon>
         <span>{{ 'app.english' | translate }}</span>

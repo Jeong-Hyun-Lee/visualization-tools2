@@ -1,8 +1,14 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component, effect } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 
 import {
   AppLanguage,
@@ -15,45 +21,35 @@ import { NewDiagramRequestService } from './new-diagram-request.service';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    RouterOutlet,
+    TranslateModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatButtonModule,
+    MatMenuModule,
+    MatDividerModule,
+    MatTooltipModule,
+  ],
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent {
   title = 'GE Vernova';
 
-  theme: AppTheme = 'light';
-  language: AppLanguage = 'ko';
-
-  private readonly destroy$ = new Subject<void>();
+  readonly theme = this.preferences.themeState;
+  readonly language = this.preferences.languageState;
 
   constructor(
     private readonly newDiagramRequest: NewDiagramRequestService,
     private readonly preferences: AppPreferencesService,
     private readonly translate: TranslateService,
-  ) {}
-
-  ngOnInit(): void {
+  ) {
     this.preferences.syncDom();
-    this.theme = this.preferences.theme;
-    this.language = this.preferences.language;
     this.translate.setDefaultLang('ko');
-    this.translate.use(this.language);
-
-    this.preferences.theme$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((t) => {
-        this.theme = t;
-      });
-
-    this.preferences.language$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((l) => {
-        this.language = l;
-        this.translate.use(l);
-      });
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    effect(() => {
+      this.translate.use(this.language());
+    });
   }
 
   onRequestNewDiagram(): void {
