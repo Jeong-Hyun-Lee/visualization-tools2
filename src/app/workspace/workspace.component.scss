@@ -208,6 +208,12 @@
   gap: 0.25rem;
 }
 
+:host ::ng-deep .workspace__toolbar-divider.p-divider-vertical {
+  margin: 0 0.35rem;
+  min-height: 1.15rem;
+  align-self: center;
+}
+
 :host ::ng-deep .workspace__mode-btn.p-button {
   width: 1.85rem;
   height: 1.85rem;
