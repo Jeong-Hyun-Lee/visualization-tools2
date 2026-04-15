@@ -35,11 +35,11 @@ describe('AppComponent', () => {
     expect(fixture.componentInstance.diagramName()).toEqual('제목없는 다이어그램');
   });
 
-  it('should render title in toolbar', () => {
+  it('should render title in header', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.brand')?.textContent).toContain(
+    expect(compiled.querySelector('.app-chrome__title')?.textContent).toContain(
       '제목없는 다이어그램',
     );
   });

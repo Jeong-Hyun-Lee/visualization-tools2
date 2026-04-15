@@ -7,6 +7,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import type { Model, NgDiagramConfig, Node, NgDiagramPaletteItem } from 'ng-diagram';
 import {
   initializeModelAdapter,
@@ -19,6 +20,15 @@ import {
   NgDiagramService,
   NgDiagramViewportService,
 } from 'ng-diagram';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { DividerModule } from 'primeng/divider';
+import { InputTextModule } from 'primeng/inputtext';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { SelectModule } from 'primeng/select';
+import { TagModule } from 'primeng/tag';
+import { ToolbarModule } from 'primeng/toolbar';
+
 import { DiagramPagesService } from '../diagram-pages.service';
 import { LocalStorageModelAdapter } from './local-storage-model-adapter';
 
@@ -30,10 +40,19 @@ type DemoNodeData = {
   selector: 'app-workspace',
   standalone: true,
   imports: [
+    FormsModule,
     NgDiagramComponent,
     NgDiagramBackgroundComponent,
     NgDiagramPaletteItemComponent,
     NgDiagramPaletteItemPreviewComponent,
+    CardModule,
+    ButtonModule,
+    ToolbarModule,
+    InputTextModule,
+    SelectModule,
+    TagModule,
+    DividerModule,
+    ScrollPanelModule,
   ],
   templateUrl: './workspace.component.html',
   styleUrl: './workspace.component.scss',
@@ -66,6 +85,24 @@ export class WorkspaceComponent {
     { data: { label: 'Start / End' }, resizable: true, rotatable: false },
     { data: { label: 'Data' }, resizable: true, rotatable: true },
   ];
+
+  readonly typeOptions = [{ label: 'Process', value: 'process' }];
+  mockType = 'process';
+
+  /** 팔레트 행 아이콘 (PrimeIcons) */
+  paletteIconClass(label: string): string {
+    const key = label.trim().toLowerCase();
+    if (key.includes('decision')) {
+      return 'pi pi-share-alt';
+    }
+    if (key.includes('start') || key.includes('end')) {
+      return 'pi pi-circle';
+    }
+    if (key.includes('data')) {
+      return 'pi pi-database';
+    }
+    return 'pi pi-square';
+  }
 
   config: NgDiagramConfig = {
     zoom: {

@@ -2,74 +2,169 @@
   display: block;
   height: 100%;
   min-height: 0;
-  --workspace-bg: #f3f5f9;
-  --workspace-panel-bg: #ffffff;
-  --workspace-panel-border: #d9deea;
-  --workspace-panel-shadow: 0 8px 26px rgba(15, 23, 42, 0.08);
-  --workspace-text-primary: #0f172a;
-  --workspace-text-muted: #64748b;
-  --workspace-button-bg: #f8fafc;
-  --workspace-button-hover-bg: #e2e8f0;
-  --workspace-button-color: #1e293b;
-  --workspace-button-border: #cbd5e1;
-  --workspace-secondary-bg: #e2e8f0;
-  --workspace-secondary-color: #334155;
-  --workspace-secondary-border: #cbd5e1;
-  --workspace-accent: #4f46e5;
 }
 
 .workspace {
   display: grid;
-  grid-template-columns: 240px minmax(0, 1fr) 300px;
-  gap: 12px;
+  grid-template-columns: 260px minmax(0, 1fr) 300px;
+  gap: 1rem;
   height: 100%;
   min-height: 0;
-  background: var(--workspace-bg);
-  padding: 12px;
+  padding: 0.5rem 0.5rem 1rem;
   box-sizing: border-box;
+  background: transparent;
 }
 
-.workspace__palette,
-.workspace__sidebar {
+:host ::ng-deep .workspace__card .p-card {
+  height: 100%;
   display: flex;
   flex-direction: column;
-  background: var(--workspace-panel-bg);
-  border: 1px solid var(--workspace-panel-border);
-  border-radius: 12px;
-  box-shadow: var(--workspace-panel-shadow);
   min-height: 0;
-  padding: 12px;
+  border-radius: var(--p-content-border-radius, 1rem);
+  border: 1px solid var(--p-content-border-color);
+  box-shadow: 0 20px 48px -32px rgba(15, 23, 42, 0.22);
+  background: var(--p-content-background);
+  overflow: hidden;
 }
 
-.workspace__panel-title {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--workspace-text-muted);
+:host ::ng-deep .workspace__card .p-card-caption {
+  padding: 1rem 1.15rem 0.2rem;
+}
+
+:host ::ng-deep .workspace__card .p-card-title {
+  font-size: 0.95rem;
   font-weight: 700;
-  margin-bottom: 10px;
+  letter-spacing: -0.02em;
+  color: var(--p-text-color);
+}
+
+:host ::ng-deep .workspace__card .p-card-subtitle {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-top: 0.35rem;
+  color: var(--p-text-muted-color);
+}
+
+:host ::ng-deep .workspace__card .p-card-body {
+  flex: 1;
+  min-height: 0;
+  padding: 0.65rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* —— Shapes 팔레트 전용 —— */
+:host ::ng-deep .workspace__card--palette .p-card-caption {
+  padding: 1rem 1.1rem 0.75rem;
+  margin: 0;
+  border-bottom: 1px solid var(--p-content-border-color);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--p-primary-color) 6%, var(--p-content-background)) 0%,
+    var(--p-content-background) 100%
+  );
+}
+
+:host ::ng-deep .workspace__card--palette .p-card-body {
+  padding: 0.75rem 0.75rem 0.85rem;
+  background: color-mix(in srgb, var(--p-surface-ground) 55%, var(--p-content-background));
+}
+
+:host ::ng-deep .workspace__scroll {
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  width: 100%;
+}
+
+:host ::ng-deep .workspace__scroll--palette .p-scrollpanel-content {
+  padding: 0.15rem 0.35rem 0.35rem 0.15rem;
+}
+
+/* 가로 스크롤바로 보이던 구분선 제거, 세로 바만 얇게 */
+:host ::ng-deep .workspace__scroll--palette .p-scrollpanel-bar-x {
+  display: none;
+}
+
+:host ::ng-deep .workspace__scroll--palette .p-scrollpanel-bar-y {
+  width: 5px;
+  opacity: 0.45;
+}
+
+:host ::ng-deep .workspace__scroll--palette .p-scrollpanel-bar-y:hover {
+  opacity: 0.85;
 }
 
 .workspace__palette-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  overflow: auto;
+  gap: 0.55rem;
 }
 
-.palette-item {
-  background: var(--workspace-button-bg);
-  border: 1px solid var(--workspace-button-border);
-  border-radius: 10px;
-  padding: 10px 12px;
-  color: var(--workspace-text-primary);
+:host ::ng-deep .workspace__palette-host {
+  display: block;
+  width: 100%;
+}
+
+.workspace__palette-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 12px;
+  padding: 0.65rem 0.75rem;
   font-weight: 600;
+  font-size: 0.875rem;
+  line-height: 1.25;
   cursor: grab;
   user-select: none;
+  color: var(--p-text-color);
+  background: var(--p-content-background);
+  border: 1px solid var(--p-content-border-color);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--p-text-color) 4%, transparent);
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease,
+    background 0.18s ease;
 }
 
-.palette-item--preview {
-  min-width: 140px;
+.workspace__palette-item:hover {
+  border-color: color-mix(in srgb, var(--p-primary-color) 35%, var(--p-content-border-color));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--p-primary-color) 18%, transparent),
+    0 6px 16px -8px color-mix(in srgb, var(--p-primary-color) 25%, transparent);
+}
+
+.workspace__palette-item:active {
+  cursor: grabbing;
+  transform: scale(0.99);
+}
+
+.workspace__palette-item-icon {
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  flex-shrink: 0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  color: var(--p-primary-color);
+  background: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--p-primary-color) 22%, transparent);
+}
+
+.workspace__palette-item-label {
+  flex: 1;
+  min-width: 0;
+  letter-spacing: -0.01em;
+}
+
+.workspace__palette-item--preview {
+  min-width: 160px;
 }
 
 .workspace__center {
@@ -77,56 +172,52 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
-  border-radius: 12px;
+  border-radius: var(--p-content-border-radius, 1rem);
   overflow: hidden;
-  border: 1px solid var(--workspace-panel-border);
-  box-shadow: var(--workspace-panel-shadow);
-  background: var(--workspace-panel-bg);
+  border: 1px solid var(--p-content-border-color);
+  box-shadow: 0 24px 56px -36px rgba(15, 23, 42, 0.28);
+  background: var(--p-content-background);
 }
 
-.workspace__topbar {
-  height: 52px;
-  border-bottom: 1px solid var(--workspace-panel-border);
-  padding: 0 12px;
+:host ::ng-deep .workspace__toolbar.p-toolbar {
+  border: none;
+  border-radius: 0;
+  padding: 0.55rem 1rem;
+  background: color-mix(in srgb, var(--p-content-background) 70%, var(--p-surface-ground));
+  border-bottom: 1px solid var(--p-content-border-color);
+}
+
+.workspace__toolbar-heading {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 0.1rem;
 }
 
-.workspace__title {
-  color: var(--workspace-text-primary);
+.workspace__toolbar-title {
   font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--p-text-color);
+  letter-spacing: -0.02em;
 }
 
-.workspace__actions {
-  display: flex;
-  gap: 8px;
-}
-
-.workspace__actions button {
-  background: var(--workspace-button-bg);
-  color: var(--workspace-button-color);
-  border: 1px solid var(--workspace-button-border);
-  border-radius: 8px;
-  padding: 0.35rem 0.7rem;
+.workspace__toolbar-hint {
+  font-size: 0.68rem;
   font-weight: 600;
-  cursor: pointer;
+  color: var(--p-text-muted-color);
+  letter-spacing: 0.02em;
 }
 
-.workspace__actions button:hover {
-  background: var(--workspace-button-hover-bg);
+.workspace__toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.4rem;
 }
 
-.workspace__actions .secondary {
-  background: var(--workspace-secondary-bg);
-  color: var(--workspace-secondary-color);
-  border-color: var(--workspace-secondary-border);
-}
-
-.workspace__actions button.active {
-  color: #ffffff;
-  background: #4f46e5;
-  border-color: #4338ca;
+:host ::ng-deep .workspace__toolbar-divider.p-divider {
+  margin: 0 0.15rem;
+  height: 1.75rem;
 }
 
 .workspace__canvas {
@@ -149,67 +240,68 @@
   cursor: grabbing !important;
 }
 
-.mock-form {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 8px;
-}
-
-.mock-form label {
-  font-size: 0.75rem;
-  color: var(--workspace-text-muted);
-  font-weight: 600;
-}
-
-.mock-form input,
-.mock-form select {
-  border: 1px solid var(--workspace-button-border);
-  border-radius: 8px;
-  padding: 0.45rem 0.55rem;
-  background: var(--workspace-button-bg);
-  color: var(--workspace-text-primary);
-}
-
-.mock-badges {
+.workspace__form {
   display: flex;
-  gap: 8px;
-  margin-top: 2px;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.badge {
-  font-size: 0.72rem;
-  border-radius: 999px;
-  padding: 0.22rem 0.55rem;
-  border: 1px solid color-mix(in srgb, var(--workspace-accent) 45%, transparent);
-  color: var(--workspace-accent);
-  background: color-mix(in srgb, var(--workspace-accent) 12%, transparent);
+.workspace__field-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--p-text-muted-color);
+  margin-top: 0.25rem;
+}
+
+.workspace__field-label:first-child {
+  margin-top: 0;
+}
+
+:host ::ng-deep .workspace__select {
+  width: 100%;
+}
+
+.workspace__form-divider {
+  margin: 0.35rem 0;
+}
+
+.workspace__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
 }
 
 @media (max-width: 1280px) {
   .workspace {
-    grid-template-columns: 220px minmax(0, 1fr);
+    grid-template-columns: 240px minmax(0, 1fr);
   }
 
-  .workspace__sidebar {
+  .workspace__card--sidebar {
     display: none;
   }
 }
 
-:host-context(body.theme-dark) {
-  --workspace-bg: #0f141d;
-  --workspace-panel-bg: #151d29;
-  --workspace-panel-border: #263241;
-  --workspace-panel-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
-  --workspace-text-primary: #e2e8f0;
-  --workspace-text-muted: #8ea0b9;
-  --workspace-button-bg: #1a2431;
-  --workspace-button-hover-bg: #273447;
-  --workspace-button-color: #e2e8f0;
-  --workspace-button-border: #33465d;
-  --workspace-secondary-bg: #25364b;
-  --workspace-secondary-color: #dbeafe;
-  --workspace-secondary-border: #3d5772;
-  --workspace-accent: #93c5fd;
+:host-context(body.theme-dark) ::ng-deep .workspace__card .p-card {
+  box-shadow: 0 24px 56px -28px rgba(0, 0, 0, 0.55);
+}
+
+:host-context(body.theme-dark) ::ng-deep .workspace__card--palette .p-card-body {
+  background: color-mix(in srgb, var(--p-surface-ground) 65%, var(--p-content-background));
+}
+
+:host-context(body.theme-dark) .workspace__palette-item {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+:host-context(body.theme-dark) .workspace__palette-item-icon {
+  background: color-mix(in srgb, var(--p-primary-color) 18%, transparent);
+  border-color: color-mix(in srgb, var(--p-primary-color) 35%, transparent);
+}
+
+:host-context(body.theme-dark) .workspace__center {
+  box-shadow: 0 28px 64px -32px rgba(0, 0, 0, 0.65);
 }
 
 :host-context(body.theme-dark) ng-diagram {

@@ -3,6 +3,9 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { HttpClient } from '@angular/common/http';
+import { providePrimeNG } from 'primeng/config';
+
+import { VernovaPreset } from './vernova-preset';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
@@ -18,6 +21,15 @@ export const appConfig: ApplicationConfig = {
     provideRouter(appRoutes),
     provideHttpClient(),
     provideAnimationsAsync(),
+    providePrimeNG({
+      ripple: true,
+      theme: {
+        preset: VernovaPreset,
+        options: {
+          darkModeSelector: 'body.theme-dark',
+        },
+      },
+    }),
     importProvidersFrom(
       TranslateModule.forRoot({
         defaultLanguage: 'ko',

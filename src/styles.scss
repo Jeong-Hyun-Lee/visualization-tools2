@@ -1,30 +1,10 @@
-@use '@angular/material' as mat;
+@import 'primeicons/primeicons.css';
 @import 'ng-diagram/styles.css';
 
-$light-theme: mat.define-theme((
-  color: (
-    theme-type: light,
-    primary: mat.$violet-palette,
-    tertiary: mat.$blue-palette,
-  ),
-  density: (
-    scale: 0,
-  ),
-));
-
-$dark-theme: mat.define-theme((
-  color: (
-    theme-type: dark,
-    primary: mat.$violet-palette,
-    tertiary: mat.$blue-palette,
-  ),
-  density: (
-    scale: 0,
-  ),
-));
-
-@include mat.core();
-@include mat.all-component-themes($light-theme);
+:root {
+  --app-font: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --app-shell-pad: 1rem 1.25rem 0.75rem;
+}
 
 html,
 body {
@@ -33,74 +13,40 @@ body {
 
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-  background: #fafafa;
-  color: #111827;
+  font-family: var(--app-font);
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  -webkit-font-smoothing: antialiased;
+  background: var(--p-surface-ground);
+  color: var(--p-text-color);
   transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 
 body.theme-dark {
-  @include mat.all-component-colors($dark-theme);
   color-scheme: dark;
-  background: #1a1a1a;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-body.theme-dark .cdk-overlay-container .mat-mdc-select-panel {
-  background: #424242;
-}
-
-body.theme-dark .cdk-overlay-container .mat-mdc-option {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-body.theme-dark .cdk-overlay-container .mat-mdc-option.mat-mdc-option-active {
-  background: rgba(255, 255, 255, 0.08) !important;
-}
-
-body.theme-dark .cdk-overlay-container .mat-mdc-option.mdc-list-item--selected {
-  background: rgba(159, 168, 218, 0.2) !important;
-}
-
-body.theme-dark .mat-mdc-menu-panel {
-  background: #333;
-}
-
-body.theme-dark .mat-mdc-menu-item {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-body.theme-dark .mat-mdc-menu-item:hover:not([disabled]) {
-  background: rgba(255, 255, 255, 0.08);
 }
 
 .app-settings-menu .app-settings-menu__heading {
   min-height: 36px;
   line-height: 36px;
   opacity: 1;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--p-text-muted-color);
   cursor: default;
   background: transparent;
 }
 
-.app-settings-menu .mat-mdc-menu-item .mat-icon {
+.app-settings-menu .p-menuitem-icon {
   margin-right: 0.5rem;
-  width: 20px;
-  height: 20px;
-  font-size: 20px;
-  color: #3f51b5;
-}
-
-body.theme-dark .app-settings-menu .mat-mdc-menu-item .mat-icon {
-  color: #9fa8da;
+  min-width: 1.1rem;
+  font-size: 0.9rem;
+  color: var(--p-primary-color);
 }
 
 body.theme-dark .app-settings-menu .app-settings-menu__heading {
-  color: #94a3b8;
+  color: var(--p-text-muted-color);
 }

@@ -1,191 +1,230 @@
 :host {
-  display: flex;
-  flex-direction: column;
+  display: block;
   height: 100vh;
   overflow: hidden;
-  --app-header-surface: #edf2fa;
-  --app-header-panel: #ffffff;
-  --app-header-border: #d9deea;
-  --app-header-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
-  --app-header-text: #0f172a;
-  --app-header-muted: #64748b;
-  --app-header-primary: #2563eb;
-  --app-header-control-bg: #f8fafc;
-  --app-header-control-hover: #e2e8f0;
-  --app-header-control-border: #cbd5e1;
-  --app-pagebar-bg: #f3f6fc;
-  --app-pagebar-tab-text: #64748b;
-  --app-pagebar-tab-active: #1d4ed8;
-  --app-pagebar-tab-chip-bg: #dbe2ea;
-  --app-pagebar-tab-chip-border: #8b95a5;
-  --app-pagebar-tab-chip-active-bg: #cfd7e2;
-  --app-pagebar-tab-chip-active-border: #6b7688;
-  --app-pagebar-tab-chip-active-text: #111827;
 }
 
-.spacer {
-  flex: 1 1 auto;
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  padding: var(--app-shell-pad);
+  box-sizing: border-box;
+  background:
+    radial-gradient(
+      ellipse 120% 80% at 0% -30%,
+      color-mix(in srgb, var(--p-primary-color) 14%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 90% 70% at 100% -10%,
+      color-mix(in srgb, var(--p-primary-color) 10%, transparent),
+      transparent 45%
+    ),
+    var(--p-surface-ground);
 }
 
-main {
+.app-chrome {
+  flex-shrink: 0;
+  border-radius: var(--p-content-border-radius, 1rem);
+  border: 1px solid var(--p-content-border-color);
+  background: var(--p-content-background);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--p-content-border-color) 80%, transparent),
+    0 20px 50px -24px rgba(15, 23, 42, 0.2);
+  padding: 0.65rem 1rem 0.55rem;
+  backdrop-filter: saturate(1.15) blur(10px);
+}
+
+body.theme-dark .app-chrome {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 24px 56px -20px rgba(0, 0, 0, 0.65);
+}
+
+.app-chrome__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3rem;
+}
+
+.app-chrome__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.app-chrome__mark {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--p-primary-color) 88%, white) 0%,
+    var(--p-primary-color) 100%
+  );
+  color: var(--p-primary-contrast-color);
+  font-size: 1.15rem;
+  box-shadow:
+    0 10px 22px color-mix(in srgb, var(--p-primary-color) 35%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+body.theme-dark .app-chrome__mark {
+  box-shadow:
+    0 10px 28px color-mix(in srgb, var(--p-primary-color) 25%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.app-chrome__titles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.app-chrome__eyebrow {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--p-text-muted-color);
+}
+
+.app-chrome__title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: var(--p-text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: min(52vw, 28rem);
+}
+
+.app-chrome__tools {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+:host ::ng-deep .app-chrome__icon-btn.p-button {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+}
+
+:host ::ng-deep .app-chrome__divider {
+  margin: 0.4rem 0 0.35rem;
+  border-color: var(--p-content-border-color);
+}
+
+.app-chrome__tabs-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.15rem;
+}
+
+:host ::ng-deep .app-chrome__add-tab.p-button {
+  width: 2.35rem;
+  height: 2.35rem;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.app-chrome__tabs-wrap {
+  min-width: 0;
+  flex: 1;
+}
+
+.app-main {
   flex: 1;
   min-height: 0;
   overflow: hidden;
-  min-width: 1400px;
+  min-width: 1280px;
+  margin-top: 0.75rem;
+  border-radius: var(--p-content-border-radius, 1rem);
+  border: 1px solid var(--p-content-border-color);
+  background: var(--p-content-background);
+  box-shadow: 0 16px 40px -28px rgba(15, 23, 42, 0.18);
 }
 
-.app-toolbar {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  min-height: 64px;
-  padding: 0.35rem 0.9rem;
-  margin: 0.5rem 0.5rem 0;
-  border: 1px solid var(--app-header-border);
-  border-radius: 12px;
-  background: var(--app-header-panel);
-  box-shadow: var(--app-header-shadow);
-}
-
-.app-toolbar__actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.app-toolbar__brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0 0.3rem;
-}
-
-.app-toolbar__logo {
-  color: var(--app-header-primary);
-}
-
-.brand {
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  color: var(--app-header-text);
-  padding: 0.1rem 0.2rem;
-}
-
-.app-toolbar__chip {
-  border-radius: 999px;
-  padding: 0.22rem 0.6rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #1d4ed8;
-  background: #dbeafe;
-}
-
-.app-toolbar__action {
-  border-radius: 10px;
-  height: 38px;
-  padding: 0 0.9rem;
-  font-weight: 500;
-  color: var(--app-header-text);
-  background: var(--app-header-control-bg);
-  border: 1px solid var(--app-header-control-border);
-}
-
-.app-toolbar__action mat-icon {
-  margin-right: 0.25rem;
-  vertical-align: middle;
-}
-
-.app-toolbar__action:hover {
-  background: var(--app-header-control-hover);
-}
-
-.app-pagebar {
-  display: flex;
-  align-items: stretch;
-  gap: 0.25rem;
-  height: 40px;
-  flex-shrink: 0;
-  margin: 0.4rem 0.5rem 0;
-  padding: 0.28rem;
-  border: 1px solid var(--app-header-border);
-  border-radius: 12px;
-  background: var(--app-pagebar-bg);
-  box-shadow: var(--app-header-shadow);
-}
-
-.app-pagebar__icon-btn {
-  width: 34px;
-  border: 1px solid var(--app-header-control-border);
-  border-radius: 8px;
-  background: var(--app-header-control-bg);
-  color: var(--app-header-muted);
-  font-size: 1rem;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: auto 0;
-  height: 34px;
-}
-
-.app-pagebar__icon-btn:hover {
-  background: var(--app-header-control-hover);
-}
-
-.app-pagebar__tabs {
-  min-width: 0;
-  flex: 1;
-  display: flex;
+body.theme-dark .app-main {
+  box-shadow: 0 20px 48px -24px rgba(0, 0, 0, 0.5);
 }
 
 .app-pagebar__tab-group {
   width: 100%;
 }
 
-:host ::ng-deep .app-pagebar__tab-group .mat-mdc-tab-header {
-  border-bottom: 0;
-}
-
-:host ::ng-deep .app-pagebar__tab-group .mat-mdc-tab {
-  min-width: 118px;
-  height: 34px;
-  opacity: 1;
-  margin: 0.15rem 0.2rem;
-  border-radius: 12px;
-  border: 1px solid var(--app-pagebar-tab-chip-border);
-  background: var(--app-pagebar-tab-chip-bg);
-}
-
-:host ::ng-deep .app-pagebar__tab-group .mdc-tab__text-label {
-  color: #1f2937;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-:host ::ng-deep .app-pagebar__tab-group .mdc-tab-indicator {
+.app-pagebar__tab-panels {
   display: none;
 }
 
-:host ::ng-deep .app-pagebar__tab-group .mdc-tab--active .mdc-tab__text-label {
-  color: var(--app-pagebar-tab-chip-active-text) !important;
+:host ::ng-deep .app-pagebar__tab-group .p-tablist {
+  border-bottom: 0;
+  background: transparent;
+  gap: 0.2rem;
 }
 
-:host ::ng-deep .app-pagebar__tab-group .mat-mdc-tab.mdc-tab--active {
+:host ::ng-deep .app-pagebar__tab-group .p-tab {
+  min-width: 108px;
+  min-height: 2.15rem;
+  opacity: 1;
+  margin: 0;
+  border-radius: 999px;
+  border: 1px solid var(--p-content-border-color);
+  background: color-mix(in srgb, var(--p-content-background) 92%, var(--p-text-muted-color));
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+:host ::ng-deep .app-pagebar__tab-group .p-tablist-active-bar {
+  display: none;
+}
+
+:host ::ng-deep .app-pagebar__tab-group .p-tab:not(.p-tab-active) .app-pagebar__chip-label {
+  color: var(--p-text-muted-color);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+:host ::ng-deep .app-pagebar__tab-group .p-tab-active .app-pagebar__chip-label {
+  color: var(--p-primary-contrast-color);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+:host ::ng-deep .app-pagebar__tab-group .p-tab-active {
   background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--app-pagebar-tab-chip-active-bg) 88%, white) 0%,
-    var(--app-pagebar-tab-chip-active-bg) 100%
+    135deg,
+    color-mix(in srgb, var(--p-primary-color) 92%, white) 0%,
+    var(--p-primary-color) 100%
   );
-  border-color: var(--app-pagebar-tab-chip-active-border);
-  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--p-primary-color) 55%, var(--p-content-border-color));
   box-shadow:
-    0 8px 18px rgba(37, 99, 235, 0.22),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+    0 8px 20px color-mix(in srgb, var(--p-primary-color) 28%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
 }
 
-:host ::ng-deep .app-pagebar__tab-group .mat-mdc-tab-header-pagination-chevron {
-  border-color: var(--app-pagebar-tab-text);
+:host ::ng-deep .app-pagebar__tab-group .p-tablist-nav-button {
+  color: var(--p-text-muted-color);
+  border-radius: 10px;
 }
 
 :host ::ng-deep .app-pagebar__chip-label {
@@ -194,32 +233,39 @@ main {
   line-height: 1;
 }
 
-:host ::ng-deep .app-pagebar__tab-group mat-chip-grid {
-  display: inline-flex;
-}
-
 :host ::ng-deep .app-pagebar__chip-row {
-  min-height: 24px;
-  padding: 0 0.15rem 0 0.35rem;
-  background: transparent !important;
-  border: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.35rem;
+  padding: 0 0.1rem 0 0.25rem;
+  background: transparent;
+  border: 0;
 }
 
 :host ::ng-deep .app-pagebar__chip-close {
-  width: 14px;
-  height: 14px;
-  font-size: 14px;
+  display: block;
+  width: 12px;
+  height: 12px;
+  font-size: 9px;
+  line-height: 12px;
   margin-left: 0;
-  color: #374151;
-  opacity: 0.9;
+  opacity: 0.85;
+}
+
+:host ::ng-deep .app-pagebar__tab-active .app-pagebar__chip-close {
+  color: var(--p-primary-contrast-color);
+}
+
+:host ::ng-deep .app-pagebar__tab:not(.p-tab-active) .app-pagebar__chip-close {
+  color: var(--p-text-color);
 }
 
 :host ::ng-deep .app-pagebar__chip-close-btn {
   border: 0;
-  margin-left: 0.35rem;
+  margin-left: 0.3rem;
   padding: 0;
-  width: 18px;
-  height: 18px;
+  width: 1.35rem;
+  height: 1.35rem;
   border-radius: 50%;
   background: transparent;
   color: inherit;
@@ -227,42 +273,13 @@ main {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: background 0.15s ease;
 }
 
 :host ::ng-deep .app-pagebar__chip-close-btn:hover {
-  background: rgba(2, 6, 23, 0.12);
+  background: color-mix(in srgb, var(--p-text-color) 12%, transparent);
 }
 
-:host-context(body.theme-dark) {
-  --app-header-surface: #0f141d;
-  --app-header-panel: #151d29;
-  --app-header-border: #263241;
-  --app-header-shadow: 0 16px 30px rgba(0, 0, 0, 0.35);
-  --app-header-text: #e2e8f0;
-  --app-header-muted: #9fb0c8;
-  --app-header-primary: #93c5fd;
-  --app-header-control-bg: #1a2431;
-  --app-header-control-hover: #273447;
-  --app-header-control-border: #33465d;
-  --app-pagebar-bg: #131c2b;
-  --app-pagebar-tab-text: #8ea0b9;
-  --app-pagebar-tab-active: #7dd3fc;
-  --app-pagebar-tab-chip-bg: #253244;
-  --app-pagebar-tab-chip-border: #4b5d78;
-  --app-pagebar-tab-chip-active-bg: #2f3f55;
-  --app-pagebar-tab-chip-active-border: #6d84a6;
-  --app-pagebar-tab-chip-active-text: #f1f5f9;
-}
-
-:host-context(body.theme-dark) .app-toolbar__chip {
-  color: #dbeafe;
-  background: rgba(96, 165, 250, 0.2);
-}
-
-:host-context(body.theme-dark) ::ng-deep .app-pagebar__tab-group .mdc-tab__text-label {
-  color: #dbe4f3;
-}
-
-:host-context(body.theme-dark) ::ng-deep .app-pagebar__chip-close {
-  color: #dbe4f3;
+:host ::ng-deep .app-pagebar__tab-active .app-pagebar__chip-close-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
 }

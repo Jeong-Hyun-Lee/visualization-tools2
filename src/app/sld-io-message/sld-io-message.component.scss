@@ -2,16 +2,16 @@
   display: block;
 }
 
-.sld-io-message {
-  padding: 0.5rem 1rem;
+:host ::ng-deep .sld-io-message.p-message {
+  margin: 0;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid var(--p-content-border-color);
+  padding: 0.65rem 1.25rem;
   font-size: 0.875rem;
-  color: #0f172a;
-  background: #ecfdf5;
-  border-bottom: 1px solid rgba(16, 185, 129, 0.25);
+  font-weight: 500;
 }
 
-.sld-io-message--error {
-  color: #7f1d1d;
-  background: #fef2f2;
-  border-bottom-color: rgba(220, 38, 38, 0.35);
+:host ::ng-deep .sld-io-message .p-message-text {
+  line-height: 1.45;
 }

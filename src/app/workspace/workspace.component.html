@@ -1,38 +1,81 @@
 <div class="workspace" [class.workspace--space-panning]="isPanActive()">
-  <aside class="workspace__palette">
-    <div class="workspace__panel-title">Shapes</div>
-    <div class="workspace__palette-list">
-      @for (paletteItem of paletteModel; track paletteItem.data?.['label'] || $index) {
-        <ng-diagram-palette-item [item]="paletteItem">
-          <div class="palette-item">{{ paletteItem.data['label'] }}</div>
-          <ng-diagram-palette-item-preview>
-            <div class="palette-item palette-item--preview">{{ paletteItem.data['label'] }}</div>
-          </ng-diagram-palette-item-preview>
-        </ng-diagram-palette-item>
-      }
-    </div>
-  </aside>
+  <p-card
+    header="Shapes"
+    subheader="Drag onto canvas"
+    styleClass="workspace__card workspace__card--palette"
+  >
+    <p-scrollpanel styleClass="workspace__scroll workspace__scroll--palette">
+      <div class="workspace__palette-list">
+        @for (paletteItem of paletteModel; track paletteItem.data?.['label'] || $index) {
+          <ng-diagram-palette-item [item]="paletteItem" class="workspace__palette-host">
+            <div class="workspace__palette-item">
+              <span class="workspace__palette-item-icon" aria-hidden="true">
+                <i [class]="paletteIconClass(paletteItem.data['label'])"></i>
+              </span>
+              <span class="workspace__palette-item-label">{{ paletteItem.data['label'] }}</span>
+            </div>
+            <ng-diagram-palette-item-preview>
+              <div class="workspace__palette-item workspace__palette-item--preview">
+                <span class="workspace__palette-item-icon" aria-hidden="true">
+                  <i [class]="paletteIconClass(paletteItem.data['label'])"></i>
+                </span>
+                <span class="workspace__palette-item-label">{{ paletteItem.data['label'] }}</span>
+              </div>
+            </ng-diagram-palette-item-preview>
+          </ng-diagram-palette-item>
+        }
+      </div>
+    </p-scrollpanel>
+  </p-card>
 
   <section class="workspace__center">
-    <div class="workspace__topbar">
-      <div class="workspace__title">Diagram</div>
-      <div class="workspace__actions">
-        <button
-          [class.active]="interactionMode() === 'select'"
-          (click)="setInteractionMode('select')"
-        >
-          Select
-        </button>
-        <button
-          [class.active]="interactionMode() === 'pan'"
-          (click)="setInteractionMode('pan')"
-        >
-          Hand
-        </button>
-        <button (click)="addNode()">Add Node</button>
-        <button class="secondary" (click)="reset()">Reset</button>
-      </div>
-    </div>
+    <p-toolbar styleClass="workspace__toolbar">
+      <ng-template pTemplate="start">
+        <div class="workspace__toolbar-heading">
+          <span class="workspace__toolbar-title">Canvas</span>
+          <span class="workspace__toolbar-hint">Space + drag to pan</span>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="end">
+        <div class="workspace__toolbar-actions">
+          <p-button
+            type="button"
+            label="Select"
+            icon="pi pi-mouse-pointer"
+            size="small"
+            [outlined]="interactionMode() !== 'select'"
+            [severity]="interactionMode() === 'select' ? 'primary' : 'secondary'"
+            (onClick)="setInteractionMode('select')"
+          />
+          <p-button
+            type="button"
+            label="Hand"
+            icon="pi pi-arrows-alt"
+            size="small"
+            [outlined]="interactionMode() !== 'pan'"
+            [severity]="interactionMode() === 'pan' ? 'primary' : 'secondary'"
+            (onClick)="setInteractionMode('pan')"
+          />
+          <p-divider layout="vertical" styleClass="workspace__toolbar-divider" />
+          <p-button
+            type="button"
+            label="Add node"
+            icon="pi pi-plus"
+            size="small"
+            (onClick)="addNode()"
+          />
+          <p-button
+            type="button"
+            label="Reset"
+            icon="pi pi-refresh"
+            size="small"
+            severity="danger"
+            [outlined]="true"
+            (onClick)="reset()"
+          />
+        </div>
+      </ng-template>
+    </p-toolbar>
 
     <div class="workspace__canvas not-content">
       <ng-diagram [model]="model" [config]="config" class="diagram">
@@ -41,22 +84,45 @@
     </div>
   </section>
 
-  <aside class="workspace__sidebar">
-    <div class="workspace__panel-title">Properties</div>
-    <div class="mock-form">
-      <label>Node ID</label>
-      <input [value]="selectedNodeId()" readonly />
-      <label>Label</label>
-      <input [value]="selectedNodeLabel()" readonly />
-      <label>Type</label>
-      <select disabled>
-        <option>Process</option>
-      </select>
-      <label>Status</label>
-      <div class="mock-badges">
-        <span class="badge">Resizable</span>
-        <span class="badge">Rotatable</span>
+  <p-card header="Properties" subheader="Selection" styleClass="workspace__card workspace__card--sidebar">
+    <div class="workspace__form">
+      <label class="workspace__field-label" for="prop-node-id">Node ID</label>
+      <input
+        id="prop-node-id"
+        pInputText
+        [fluid]="true"
+        [value]="selectedNodeId()"
+        readonly
+      />
+
+      <label class="workspace__field-label" for="prop-label">Label</label>
+      <input
+        id="prop-label"
+        pInputText
+        [fluid]="true"
+        [value]="selectedNodeLabel()"
+        readonly
+      />
+
+      <label class="workspace__field-label" for="prop-type">Type</label>
+      <p-select
+        inputId="prop-type"
+        styleClass="workspace__select"
+        [options]="typeOptions"
+        [(ngModel)]="mockType"
+        optionLabel="label"
+        optionValue="value"
+        [disabled]="true"
+        placeholder="Type"
+      />
+
+      <p-divider styleClass="workspace__form-divider" />
+
+      <span class="workspace__field-label">Status</span>
+      <div class="workspace__tags">
+        <p-tag value="Resizable" severity="secondary" [rounded]="true" />
+        <p-tag value="Rotatable" severity="secondary" [rounded]="true" />
       </div>
     </div>
-  </aside>
+  </p-card>
 </div>

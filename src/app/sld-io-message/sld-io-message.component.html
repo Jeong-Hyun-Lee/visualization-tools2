@@ -1,9 +1,11 @@
 @if (io.state(); as state) {
-  <div
+  <p-message
     class="sld-io-message"
-    [class.sld-io-message--error]="state.variant === 'error'"
+    [severity]="state.variant === 'error' ? 'error' : 'success'"
+    [icon]="state.variant === 'error' ? 'pi pi-times-circle' : 'pi pi-check-circle'"
+    variant="simple"
     [attr.role]="state.variant === 'error' ? 'alert' : 'status'"
-    >
+  >
     {{ state.text }}
-  </div>
+  </p-message>
 }

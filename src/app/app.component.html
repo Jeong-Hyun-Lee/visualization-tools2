@@ -1,125 +1,89 @@
-<mat-toolbar class="app-toolbar" color="transparent">
-  <div class="app-toolbar__brand">
-    <span class="brand">{{ diagramName() }}</span>
-  </div>
-  <span class="spacer"></span>
-  <div class="app-toolbar__actions">
-    <button
-      mat-flat-button
-      class="app-toolbar__action"
-      type="button"
-      [matMenuTriggerFor]="settingsMenu"
-      [attr.aria-label]="'app.settingsAria' | translate"
-      [matTooltip]="'app.settings' | translate"
-    >
-      <mat-icon>settings</mat-icon>
-    </button>
-    <mat-menu
-      #settingsMenu="matMenu"
-      class="app-settings-menu"
-      xPosition="before"
-    >
-      <button
-        mat-menu-item
-        disabled
-        type="button"
-        class="app-settings-menu__heading"
-      >
-        {{ "app.theme" | translate }}
-      </button>
-      <button mat-menu-item type="button" (click)="onThemeSelect('light')">
-        <mat-icon
-          [style.visibility]="theme() === 'light' ? 'visible' : 'hidden'"
-        >
-          check
-        </mat-icon>
-        <span>{{ "app.light" | translate }}</span>
-      </button>
-      <button mat-menu-item type="button" (click)="onThemeSelect('dark')">
-        <mat-icon
-          [style.visibility]="theme() === 'dark' ? 'visible' : 'hidden'"
-        >
-          check
-        </mat-icon>
-        <span>{{ "app.dark" | translate }}</span>
-      </button>
-      <mat-divider></mat-divider>
-      <button
-        mat-menu-item
-        disabled
-        type="button"
-        class="app-settings-menu__heading"
-      >
-        {{ "app.language" | translate }}
-      </button>
-      <button mat-menu-item type="button" (click)="onLanguageSelect('ko')">
-        <mat-icon
-          [style.visibility]="language() === 'ko' ? 'visible' : 'hidden'"
-        >
-          check
-        </mat-icon>
-        <span>{{ "app.korean" | translate }}</span>
-      </button>
-      <button mat-menu-item type="button" (click)="onLanguageSelect('en')">
-        <mat-icon
-          [style.visibility]="language() === 'en' ? 'visible' : 'hidden'"
-        >
-          check
-        </mat-icon>
-        <span>{{ "app.english" | translate }}</span>
-      </button>
-    </mat-menu>
-  </div>
-</mat-toolbar>
+<div class="app-layout">
+  <header class="app-chrome">
+    <div class="app-chrome__top">
+      <div class="app-chrome__brand">
+        <div class="app-chrome__titles">
+          <span class="app-chrome__eyebrow">Node Editor</span>
+          <h1 class="app-chrome__title">{{ diagramName() }}</h1>
+        </div>
+      </div>
+      <div class="app-chrome__tools">
+        <p-button
+          type="button"
+          icon="pi pi-cog"
+          [rounded]="true"
+          [text]="true"
+          severity="secondary"
+          styleClass="app-chrome__icon-btn"
+          (onClick)="settingsMenu.toggle($event)"
+          [attr.aria-label]="'app.settingsAria' | translate"
+          [pTooltip]="'app.settings' | translate"
+          tooltipPosition="bottom"
+        />
+        <p-menu
+          #settingsMenu
+          [model]="settingsMenuItems()"
+          [popup]="true"
+          [appendTo]="'body'"
+          styleClass="app-settings-menu"
+        />
+      </div>
+    </div>
 
-<div class="app-pagebar">
-  <button
-    type="button"
-    class="app-pagebar__icon-btn"
-    aria-label="새 다이어그램 추가"
-    (click)="onAddPage()"
-  >
-    <mat-icon>add</mat-icon>
-  </button>
-  <div class="app-pagebar__tabs">
-    <mat-tab-group
-      [selectedIndex]="activePageIndex()"
-      (selectedIndexChange)="onSelectPage($event)"
-      animationDuration="0ms"
-      mat-stretch-tabs="false"
-      class="app-pagebar__tab-group"
-    >
-      @for (page of pages(); track page.id; let idx = $index) {
-        <mat-tab>
-          <ng-template mat-tab-label>
-            <mat-chip-grid aria-label="다이어그램 탭">
-              <mat-chip-row
-                class="app-pagebar__chip-row"
-                [removable]="idx > 0"
-                (removed)="onClosePage(idx, $event)"
-              >
-                <span class="app-pagebar__chip-label">{{ page.name }}</span>
-                @if (idx > 0) {
-                  <button
-                    matChipRemove
-                    type="button"
-                    class="app-pagebar__chip-close-btn"
-                    [attr.aria-label]="page.name + ' 탭 닫기'"
-                  >
-                    <mat-icon class="app-pagebar__chip-close" aria-hidden="true"
-                      >close</mat-icon
+    <p-divider layout="horizontal" styleClass="app-chrome__divider" />
+
+    <div class="app-chrome__tabs-row">
+      <p-button
+        type="button"
+        icon="pi pi-plus"
+        [rounded]="true"
+        severity="primary"
+        styleClass="app-chrome__add-tab"
+        (onClick)="onAddPage()"
+        [attr.aria-label]="'새 다이어그램 추가'"
+        pTooltip="새 다이어그램"
+        tooltipPosition="bottom"
+      />
+      <div class="app-chrome__tabs-wrap">
+        <p-tabs
+          class="app-pagebar__tab-group"
+          [value]="activePageIndex()"
+          (valueChange)="onSelectPage($event)"
+          [scrollable]="true"
+        >
+          <p-tablist>
+            @for (page of pages(); track page.id; let idx = $index) {
+              <p-tab [value]="idx">
+                <span class="app-pagebar__chip-row">
+                  <span class="app-pagebar__chip-label">{{ page.name }}</span>
+                  @if (idx > 0) {
+                    <button
+                      type="button"
+                      class="app-pagebar__chip-close-btn"
+                      (click)="onClosePage(idx, $event)"
+                      [attr.aria-label]="page.name + ' 탭 닫기'"
                     >
-                  </button>
-                }
-              </mat-chip-row>
-            </mat-chip-grid>
-          </ng-template>
-        </mat-tab>
-      }
-    </mat-tab-group>
-  </div>
-</div>
+                      <i
+                        class="pi pi-times app-pagebar__chip-close"
+                        aria-hidden="true"
+                      ></i>
+                    </button>
+                  }
+                </span>
+              </p-tab>
+            }
+          </p-tablist>
+          <p-tabpanels class="app-pagebar__tab-panels">
+            @for (page of pages(); track page.id; let idx = $index) {
+              <p-tabpanel [value]="idx"></p-tabpanel>
+            }
+          </p-tabpanels>
+        </p-tabs>
+      </div>
+    </div>
+  </header>
 
-<main>
-  <router-outlet></router-outlet>
-</main>
+  <main class="app-main">
+    <router-outlet></router-outlet>
+  </main>
+</div>
