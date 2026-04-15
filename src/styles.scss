@@ -4,6 +4,7 @@
 :root {
   --app-font: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --app-shell-pad: 1rem 1.25rem 0.75rem;
+  --app-panel-blur: 12px;
 }
 
 html,
@@ -23,6 +24,11 @@ body {
     color 0.25s ease;
 }
 
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--p-primary-color) 30%, transparent) transparent;
+}
+
 body.theme-dark {
   color-scheme: dark;
 }
@@ -38,6 +44,12 @@ body.theme-dark {
   color: var(--p-text-muted-color);
   cursor: default;
   background: transparent;
+}
+
+.app-settings-menu {
+  border-radius: 12px;
+  overflow: hidden;
+  backdrop-filter: blur(var(--app-panel-blur)) saturate(1.2);
 }
 
 .app-settings-menu .p-menuitem-icon {

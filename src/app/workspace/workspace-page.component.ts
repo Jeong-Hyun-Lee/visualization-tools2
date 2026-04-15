@@ -7,7 +7,7 @@ import { WorkspaceComponent } from './workspace.component';
   standalone: true,
   imports: [WorkspaceComponent],
   providers: [provideNgDiagram()],
-  template: `<app-workspace />`,
+  template: `<app-workspace [storageKey]="'workspace-route'" />`,
   styles: `
     :host {
       display: block;

@@ -2,6 +2,9 @@
   <header class="app-chrome">
     <div class="app-chrome__top">
       <div class="app-chrome__brand">
+        <div class="app-chrome__mark" aria-hidden="true">
+          <i class="pi pi-sitemap"></i>
+        </div>
         <div class="app-chrome__titles">
           <span class="app-chrome__eyebrow">{{ 'app.brandChip' | translate }}</span>
           <h1 class="app-chrome__title">{{ diagramName() }}</h1>
@@ -32,54 +35,51 @@
 
     <p-divider layout="horizontal" styleClass="app-chrome__divider" />
 
-    <div class="app-chrome__tabs-row">
-      <p-button
-        type="button"
-        icon="pi pi-plus"
-        [rounded]="true"
-        severity="primary"
-        styleClass="app-chrome__add-tab"
-        (onClick)="onAddPage()"
-        [attr.aria-label]="'app.newDiagram' | translate"
-        [pTooltip]="'app.newDiagramTooltip' | translate"
-        tooltipPosition="bottom"
-      />
-      <div class="app-chrome__tabs-wrap">
-        <div class="app-pagebar__diagram-list" role="tablist">
+  </header>
+
+  <main class="app-main">
+    <div class="app-main__tabbar">
+      <p-tabs
+        class="app-pagebar__tab-group"
+        [value]="activePageIndex()"
+        (valueChange)="onSelectPage($event)"
+        [scrollable]="true"
+        [lazy]="true"
+      >
+        <p-tablist>
           @for (page of pages(); track page.id; let idx = $index) {
-            <div
-              class="app-pagebar__diagram-item"
-              [class.app-pagebar__diagram-item--active]="idx === activePageIndex()"
-              role="presentation"
-            >
-              <button
-                type="button"
-                class="app-pagebar__diagram-select"
-                role="tab"
-                [attr.aria-selected]="idx === activePageIndex()"
-                [id]="'diagram-tab-' + idx"
-                (click)="onSelectPage(idx)"
-              >
-                <span class="app-pagebar__tab-label">{{ page.name }}</span>
-              </button>
+            <p-tab [value]="idx">
+              <span class="app-pagebar__tab-label">{{ page.name }}</span>
               @if (idx > 0) {
                 <button
                   type="button"
-                  class="app-pagebar__diagram-close"
+                  class="app-pagebar__tab-close-btn"
                   (click)="onClosePage(idx, $event)"
                   [attr.aria-label]="('nodeEditor.closeTabAria' | translate) + ': ' + page.name"
                 >
                   <i class="pi pi-times app-pagebar__tab-close" aria-hidden="true"></i>
                 </button>
               }
-            </div>
+            </p-tab>
           }
-        </div>
-      </div>
+          <p-tab
+            [value]="-1"
+            class="app-pagebar__tab app-pagebar__tab--add"
+            [pTooltip]="'app.newDiagramTooltip' | translate"
+            tooltipPosition="bottom"
+            [attr.aria-label]="'app.newDiagram' | translate"
+          >
+            <i class="pi pi-plus" aria-hidden="true"></i>
+          </p-tab>
+        </p-tablist>
+        <p-tabpanels class="app-pagebar__tab-panels">
+          @for (page of pages(); track page.id; let idx = $index) {
+            <p-tabpanel [value]="idx" [lazy]="true">
+              <app-workspace [storageKey]="page.storageKey" />
+            </p-tabpanel>
+          }
+        </p-tabpanels>
+      </p-tabs>
     </div>
-  </header>
-
-  <main class="app-main">
-    <router-outlet></router-outlet>
   </main>
 </div>

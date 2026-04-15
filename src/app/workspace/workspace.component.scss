@@ -6,11 +6,11 @@
 
 .workspace {
   display: grid;
-  grid-template-columns: 260px minmax(0, 1fr) 300px;
-  gap: 1rem;
+  grid-template-columns: 220px minmax(0, 1fr) 280px;
+  gap: 0.6rem;
   height: 100%;
   min-height: 0;
-  padding: 0.5rem 0.5rem 1.25rem;
+  padding: 0.2rem 0.25rem 0.6rem;
   box-sizing: border-box;
   background: transparent;
 }
@@ -20,58 +20,54 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-  border-radius: var(--p-content-border-radius, 1rem);
+  border-radius: 0.7rem;
   border: 1px solid var(--p-content-border-color);
-  box-shadow: 0 20px 48px -32px rgba(15, 23, 42, 0.22);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
   background: var(--p-content-background);
   overflow: hidden;
 }
 
 :host ::ng-deep .workspace__card .p-card-caption {
-  padding: 1rem 1.15rem 0.2rem;
+  padding: 0.7rem 0.8rem 0.15rem;
 }
 
 :host ::ng-deep .workspace__card .p-card-title {
-  font-size: 0.95rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   color: var(--p-text-color);
 }
 
 :host ::ng-deep .workspace__card .p-card-subtitle {
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  margin-top: 0.35rem;
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  margin-top: 0.15rem;
   color: var(--p-text-muted-color);
 }
 
 :host ::ng-deep .workspace__card .p-card-body {
   flex: 1;
   min-height: 0;
-  padding: 0.65rem 1rem 1rem;
+  padding: 0.55rem 0.7rem 0.75rem;
   display: flex;
   flex-direction: column;
 }
 
 /* —— Shapes 팔레트 전용 —— */
 :host ::ng-deep .workspace__card--palette .p-card-caption {
-  padding: 1rem 1.1rem 0.75rem;
+  padding: 0.65rem 0.75rem 0.55rem;
   margin: 0;
   border-bottom: 1px solid var(--p-content-border-color);
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--p-primary-color) 6%, var(--p-content-background)) 0%,
-    var(--p-content-background) 100%
-  );
+  background: var(--p-content-background);
 }
 
 :host ::ng-deep .workspace__card--palette .p-card-body {
   flex: 0 1 auto;
   min-height: 0;
-  padding: 0.75rem 0.75rem 0.95rem;
-  background: color-mix(in srgb, var(--p-surface-ground) 55%, var(--p-content-background));
+  padding: 0.55rem 0.55rem 0.65rem;
+  background: color-mix(in srgb, var(--p-surface-ground) 28%, var(--p-content-background));
 }
 
 /* Shapes 카드: 그리드 전체 높이를 채우지 않고 내용 높이로 — 하단 테두리·radius가 잘리지 않음 */
@@ -88,18 +84,18 @@
 }
 
 .workspace__palette-scroll {
-  max-height: min(70vh, calc(100dvh - 14rem));
+  max-height: min(72vh, calc(100dvh - 12.5rem));
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 0.1rem 0.15rem 0.15rem 0.05rem;
+  padding: 0.05rem;
   scrollbar-gutter: stable;
 }
 
 .workspace__palette-list {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
+  gap: 0.4rem;
 }
 
 :host ::ng-deep .workspace__palette-host {
@@ -113,17 +109,17 @@
   gap: 0.65rem;
   width: 100%;
   box-sizing: border-box;
-  border-radius: 12px;
-  padding: 0.65rem 0.75rem;
+  border-radius: 0.5rem;
+  padding: 0.48rem 0.55rem;
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 0.76rem;
   line-height: 1.25;
   cursor: grab;
   user-select: none;
   color: var(--p-text-color);
   background: var(--p-content-background);
   border: 1px solid var(--p-content-border-color);
-  box-shadow: 0 1px 2px color-mix(in srgb, var(--p-text-color) 4%, transparent);
+  box-shadow: none;
   transition:
     border-color 0.18s ease,
     box-shadow 0.18s ease,
@@ -133,9 +129,7 @@
 
 .workspace__palette-item:hover {
   border-color: color-mix(in srgb, var(--p-primary-color) 35%, var(--p-content-border-color));
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--p-primary-color) 18%, transparent),
-    0 6px 16px -8px color-mix(in srgb, var(--p-primary-color) 25%, transparent);
+  background: color-mix(in srgb, var(--p-primary-color) 6%, var(--p-content-background));
 }
 
 .workspace__palette-item:active {
@@ -146,11 +140,11 @@
 .workspace__palette-item-icon {
   display: grid;
   place-items: center;
-  width: 2.1rem;
-  height: 2.1rem;
+  width: 1.55rem;
+  height: 1.55rem;
   flex-shrink: 0;
-  border-radius: 10px;
-  font-size: 0.95rem;
+  border-radius: 0.4rem;
+  font-size: 0.76rem;
   color: var(--p-primary-color);
   background: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
   border: 1px solid color-mix(in srgb, var(--p-primary-color) 22%, transparent);
@@ -163,7 +157,7 @@
 }
 
 .workspace__palette-item--preview {
-  min-width: 160px;
+  min-width: 132px;
 }
 
 .workspace__center {
@@ -171,18 +165,18 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
-  border-radius: var(--p-content-border-radius, 1rem);
+  border-radius: 0.7rem;
   overflow: hidden;
   border: 1px solid var(--p-content-border-color);
-  box-shadow: 0 24px 56px -36px rgba(15, 23, 42, 0.28);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
   background: var(--p-content-background);
 }
 
 :host ::ng-deep .workspace__toolbar.p-toolbar {
   border: none;
   border-radius: 0;
-  padding: 0.55rem 1rem;
-  background: color-mix(in srgb, var(--p-content-background) 70%, var(--p-surface-ground));
+  padding: 0.35rem 0.6rem;
+  background: color-mix(in srgb, var(--p-surface-ground) 28%, var(--p-content-background));
   border-bottom: 1px solid var(--p-content-border-color);
 }
 
@@ -194,16 +188,16 @@
 
 .workspace__toolbar-title {
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.77rem;
   color: var(--p-text-color);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 .workspace__toolbar-hint {
-  font-size: 0.68rem;
-  font-weight: 600;
+  font-size: 0.62rem;
+  font-weight: 500;
   color: var(--p-text-muted-color);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
 }
 
 .workspace__toolbar-actions {
@@ -211,13 +205,15 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.4rem;
+  gap: 0.25rem;
 }
 
 :host ::ng-deep .workspace__mode-btn.p-button {
-  width: 2.2rem;
-  height: 2.2rem;
+  width: 1.85rem;
+  height: 1.85rem;
   padding: 0;
+  border-width: 1px;
+  border-radius: 0.45rem;
 }
 
 /* Undo/Redo는 비활성 상태에서도 식별 가능하도록 대비를 강화 */
@@ -234,7 +230,7 @@
 }
 
 :host ::ng-deep .workspace__history-btn.p-button:disabled {
-  opacity: 0.62;
+  opacity: 0.56;
   color: var(--p-text-muted-color);
   background: color-mix(in srgb, var(--p-content-background) 88%, var(--p-surface-ground));
 }
@@ -244,7 +240,7 @@
 }
 
 :host ::ng-deep .workspace__mode-btn--select .workspace__mode-material-icon {
-  font-size: 1.08rem;
+  font-size: 0.92rem;
   line-height: 1;
   font-variation-settings:
     'FILL' 0,
@@ -256,6 +252,7 @@
 .workspace__canvas {
   flex: 1;
   min-height: 0;
+  background: color-mix(in srgb, var(--p-surface-ground) 28%, var(--p-content-background));
 }
 
 /* 링크 드래그 중 임시 엣지 가시성 보강 */
@@ -283,13 +280,13 @@
 .workspace__form {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.38rem;
 }
 
 .workspace__field-label {
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--p-text-muted-color);
   margin-top: 0.25rem;
@@ -304,18 +301,18 @@
 }
 
 .workspace__form-divider {
-  margin: 0.35rem 0;
+  margin: 0.2rem 0;
 }
 
 .workspace__tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.3rem;
 }
 
 @media (max-width: 1280px) {
   .workspace {
-    grid-template-columns: 240px minmax(0, 1fr);
+    grid-template-columns: 210px minmax(0, 1fr);
   }
 
   .workspace__card--sidebar {
@@ -324,7 +321,7 @@
 }
 
 :host-context(body.theme-dark) ::ng-deep .workspace__card .p-card {
-  box-shadow: 0 24px 56px -28px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 :host-context(body.theme-dark) ::ng-deep .workspace__card--palette .p-card-body {
@@ -341,7 +338,7 @@
 }
 
 :host-context(body.theme-dark) .workspace__center {
-  box-shadow: 0 28px 64px -32px rgba(0, 0, 0, 0.65);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 :host-context(body.theme-dark) ng-diagram {

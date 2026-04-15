@@ -7,12 +7,12 @@ import {
   effect,
   inject,
 } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import type { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { MenuModule } from 'primeng/menu';
+import { TabsModule } from 'primeng/tabs';
 import { TooltipModule } from 'primeng/tooltip';
 
 import {
@@ -22,6 +22,7 @@ import {
 } from './app-preferences.service';
 import { DiagramPagesService } from './diagram-pages.service';
 import { I18nRefreshService } from './i18n-refresh.service';
+import { WorkspaceComponent } from './workspace/workspace.component';
 
 @Component({
   selector: 'app-root',
@@ -30,11 +31,12 @@ import { I18nRefreshService } from './i18n-refresh.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    RouterOutlet,
+    WorkspaceComponent,
     TranslateModule,
     ButtonModule,
     DividerModule,
     MenuModule,
+    TabsModule,
     TooltipModule,
   ],
 })
@@ -143,7 +145,17 @@ export class AppComponent {
 
   onSelectPage(value: string | number | undefined): void {
     const index = typeof value === 'string' ? parseInt(value, 10) : Number(value);
-    if (Number.isFinite(index)) {
+    if (!Number.isFinite(index)) {
+      return;
+    }
+
+    // Tab list의 마지막 "+" 탭을 클릭하면 새 다이어그램을 생성한다.
+    if (index === -1) {
+      this.onAddPage();
+      return;
+    }
+
+    if (index >= 0) {
       this.diagramPages.selectPageByIndex(index);
     }
   }

@@ -8,6 +8,7 @@ import {
   computed,
   effect,
   inject,
+  input,
   runInInjectionContext,
   signal,
 } from '@angular/core';
@@ -24,6 +25,7 @@ import {
   NgDiagramSelectionService,
   NgDiagramService,
   NgDiagramViewportService,
+  provideNgDiagram,
 } from 'ng-diagram';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -47,6 +49,7 @@ type DemoNodeData = {
 @Component({
   selector: 'app-workspace',
   standalone: true,
+  providers: [provideNgDiagram()],
   imports: [
     FormsModule,
     NgDiagramComponent,
@@ -68,6 +71,7 @@ type DemoNodeData = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WorkspaceComponent {
+  readonly storageKey = input('ng-diagram-custom-demo');
   readonly interactionMode = signal<'select' | 'pan'>('select');
   readonly canUndo = signal(false);
   readonly canRedo = signal(false);
@@ -193,10 +197,13 @@ export class WorkspaceComponent {
     nodeDraggingEnabled: true,
   };
 
-  model = this.createModel(this.diagramPages.activePage()?.storageKey);
+  model = this.createModel('ng-diagram-custom-demo');
 
   constructor() {
     const shortcutHandler = (event: KeyboardEvent): void => {
+      if (!this.isActiveTabWorkspace()) {
+        return;
+      }
       if (event.repeat || this.isEditableTarget(event.target)) {
         return;
       }
@@ -233,11 +240,8 @@ export class WorkspaceComponent {
     );
 
     effect(() => {
-      const activePage = this.diagramPages.activePage();
-      if (!activePage) {
-        return;
-      }
-      this.model = this.createModel(activePage.storageKey);
+      const key = this.storageKey();
+      this.model = this.createModel(key);
       queueMicrotask(() => this.viewportService.zoomToFit());
     });
   }
@@ -271,6 +275,9 @@ export class WorkspaceComponent {
   }
 
   onUndo(): void {
+    if (!this.isActiveTabWorkspace()) {
+      return;
+    }
     this.diagramService.transaction(() => {
       this.currentAdapter?.undo();
     });
@@ -278,6 +285,9 @@ export class WorkspaceComponent {
   }
 
   onRedo(): void {
+    if (!this.isActiveTabWorkspace()) {
+      return;
+    }
     this.diagramService.transaction(() => {
       this.currentAdapter?.redo();
     });
@@ -286,6 +296,9 @@ export class WorkspaceComponent {
 
   @HostListener('window:keydown', ['$event'])
   onWindowKeydown(event: KeyboardEvent): void {
+    if (!this.isActiveTabWorkspace()) {
+      return;
+    }
     if (event.code !== 'Space' && event.key !== ' ') {
       return;
     }
@@ -298,6 +311,9 @@ export class WorkspaceComponent {
 
   @HostListener('window:keyup', ['$event'])
   onWindowKeyup(event: KeyboardEvent): void {
+    if (!this.isActiveTabWorkspace()) {
+      return;
+    }
     if (event.code !== 'Space' && event.key !== ' ') {
       return;
     }
@@ -307,6 +323,9 @@ export class WorkspaceComponent {
 
   @HostListener('window:blur')
   onWindowBlur(): void {
+    if (!this.isActiveTabWorkspace()) {
+      return;
+    }
     this.toggleSpacePanning(false);
   }
 
@@ -340,5 +359,9 @@ export class WorkspaceComponent {
       return true;
     }
     return target.isContentEditable;
+  }
+
+  private isActiveTabWorkspace(): boolean {
+    return this.diagramPages.activePage()?.storageKey === this.storageKey();
   }
 }
