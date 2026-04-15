@@ -69,6 +69,8 @@
     "zoomIn": "Zoom in",
     "zoomInTooltip": "Zoom in",
     "zoomLevel": "Zoom level",
+    "renameDiagram": "Rename diagram title",
+    "renameDiagramTooltip": "Click to rename diagram title",
     "zoomFit": "Fit",
     "zoomFitTooltip": "Zoom to fit all",
     "export": "Export",

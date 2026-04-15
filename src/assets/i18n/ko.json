@@ -69,6 +69,8 @@
     "zoomIn": "확대",
     "zoomInTooltip": "줌 확대",
     "zoomLevel": "줌 비율",
+    "renameDiagram": "다이어그램 제목 수정",
+    "renameDiagramTooltip": "클릭하여 다이어그램 제목 수정",
     "zoomFit": "맞춤",
     "zoomFitTooltip": "전체가 보이게 맞춤",
     "export": "보내기",

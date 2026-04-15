@@ -100,6 +100,37 @@
   max-width: min(52vw, 28rem);
 }
 
+.app-chrome__title-btn {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  text-align: left;
+  cursor: text;
+}
+
+.app-chrome__title-input {
+  width: min(52vw, 28rem);
+  max-width: 100%;
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 0.4rem;
+  background: var(--p-content-background);
+  color: var(--p-text-color);
+  font: inherit;
+  font-size: 0.96rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  padding: 0.2rem 0.5rem;
+  box-sizing: border-box;
+}
+
+.app-chrome__title-input:focus {
+  outline: 0;
+  border-color: var(--p-primary-color);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--p-primary-color) 35%, transparent);
+}
+
 .app-chrome__tools {
   display: flex;
   align-items: center;

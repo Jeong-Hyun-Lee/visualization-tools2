@@ -85,12 +85,28 @@ export class DiagramPagesService {
     this.graphCache.delete(pageToRemove.storageKey);
   }
 
+  renameActivePage(nextName: string): void {
+    const activeId = this.activePageIdSignal();
+    const normalizedName = nextName.trim();
+
+    this.pagesSignal.update((pages) =>
+      pages.map((page, idx) => {
+        if (page.id !== activeId) {
+          return page;
+        }
+        return {
+          ...page,
+          name: normalizedName || this.getUntitledNameWithIndex(idx),
+        };
+      }),
+    );
+  }
+
   private createPage(index: number): DiagramPage {
     const id = crypto.randomUUID();
-    const untitled = getUntitledName();
     return {
       id,
-      name: index <= 1 ? untitled : `${untitled} ${index}`,
+      name: this.getUntitledNameWithIndex(index - 1),
       storageKey: `diagram-${id}`,
     };
   }
@@ -153,7 +169,6 @@ export class DiagramPagesService {
     const pages = session.tabs.map((tab, idx) => {
       const id = tab.diagramId || crypto.randomUUID();
       const storageKey = id;
-      const untitled = getUntitledName();
 
       const graph = this.toModelChanges(tab.payload?.graph);
       if (graph) {
@@ -164,7 +179,7 @@ export class DiagramPagesService {
         id,
         name:
           tab.diagramName?.trim() ||
-          (idx === 0 ? untitled : `${untitled} ${idx + 1}`),
+          this.getUntitledNameWithIndex(idx),
         storageKey,
       };
     });
@@ -186,5 +201,10 @@ export class DiagramPagesService {
           ? maybe.metadata
           : { viewport: { x: 0, y: 0, scale: 1 } },
     };
+  }
+
+  private getUntitledNameWithIndex(index: number): string {
+    const untitled = getUntitledName();
+    return index <= 0 ? untitled : `${untitled} ${index + 1}`;
   }
 }

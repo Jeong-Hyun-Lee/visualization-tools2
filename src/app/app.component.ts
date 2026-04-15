@@ -3,9 +3,12 @@ import {
   Component,
   DestroyRef,
   DOCUMENT,
+  ElementRef,
   computed,
   effect,
   inject,
+  signal,
+  viewChild,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService, type MenuItem } from 'primeng/api';
@@ -70,6 +73,9 @@ export class AppComponent {
       this.translate.instant('workspace.defaultUntitledDiagram')
     );
   });
+  readonly titleEditInput = viewChild<ElementRef<HTMLInputElement>>('titleEditInput');
+  readonly isEditingTitle = signal(false);
+  readonly titleDraft = signal('');
 
   readonly settingsMenuItems = computed((): MenuItem[] => {
     this.i18nRefresh.revision();
@@ -141,6 +147,33 @@ export class AppComponent {
 
   onLanguageSelect(lang: AppLanguage): void {
     this.preferences.setLanguage(lang);
+  }
+
+  startTitleEdit(): void {
+    const name = this.diagramPages.activePage()?.name;
+    if (!name) {
+      return;
+    }
+    this.titleDraft.set(name);
+    this.isEditingTitle.set(true);
+    queueMicrotask(() => {
+      const input = this.titleEditInput()?.nativeElement;
+      input?.focus();
+      input?.select();
+    });
+  }
+
+  onTitleDraftInput(value: string): void {
+    this.titleDraft.set(value);
+  }
+
+  cancelTitleEdit(): void {
+    this.isEditingTitle.set(false);
+  }
+
+  saveTitleEdit(): void {
+    this.diagramPages.renameActivePage(this.titleDraft());
+    this.isEditingTitle.set(false);
   }
 
   onSelectPage(value: string | number | undefined): void {

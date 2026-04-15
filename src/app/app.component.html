@@ -8,7 +8,28 @@
         </div>
         <div class="app-chrome__titles">
           <span class="app-chrome__eyebrow">{{ 'app.brandChip' | translate }}</span>
-          <h1 class="app-chrome__title">{{ diagramName() }}</h1>
+          @if (!isEditingTitle()) {
+            <button
+              type="button"
+              class="app-chrome__title-btn"
+              (click)="startTitleEdit()"
+              [pTooltip]="'workspace.renameDiagramTooltip' | translate"
+              tooltipPosition="bottom"
+            >
+              <h1 class="app-chrome__title">{{ diagramName() }}</h1>
+            </button>
+          } @else {
+            <input
+              #titleEditInput
+              class="app-chrome__title-input"
+              [value]="titleDraft()"
+              (input)="onTitleDraftInput($any($event.target).value)"
+              (keydown.enter)="saveTitleEdit()"
+              (keydown.escape)="cancelTitleEdit()"
+              (blur)="saveTitleEdit()"
+              [attr.aria-label]="'workspace.renameDiagram' | translate"
+            />
+          }
         </div>
       </div>
       <div class="app-chrome__tools">
