@@ -214,6 +214,20 @@
   align-self: center;
 }
 
+:host ::ng-deep .workspace__zoom-select {
+  width: 5.2rem;
+}
+
+:host ::ng-deep .workspace__zoom-select .p-select-label {
+  font-size: 0.72rem;
+  padding-block: 0.32rem;
+  padding-inline: 0.5rem;
+}
+
+:host ::ng-deep .workspace__zoom-select .p-select-dropdown {
+  width: 1.7rem;
+}
+
 :host ::ng-deep .workspace__mode-btn.p-button {
   width: 1.85rem;
   height: 1.85rem;

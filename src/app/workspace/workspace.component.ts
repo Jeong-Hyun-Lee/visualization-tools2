@@ -87,6 +87,23 @@ export class WorkspaceComponent {
   private readonly injector = inject(Injector);
   private spacePanningActive = signal(false);
   private currentAdapter: IndexedDbModelAdapter | null = null;
+  readonly canZoomIn = this.viewportService.canZoomIn;
+  readonly canZoomOut = this.viewportService.canZoomOut;
+  readonly zoomPercent = computed(() => {
+    const scale = this.viewportService.scale();
+    const percent = Math.round(scale * 100);
+    return Number.isFinite(percent) ? percent : 100;
+  });
+  readonly zoomOptions = [
+    { label: '25%', value: 25 },
+    { label: '50%', value: 50 },
+    { label: '75%', value: 75 },
+    { label: '100%', value: 100 },
+    { label: '125%', value: 125 },
+    { label: '150%', value: 150 },
+    { label: '200%', value: 200 },
+    { label: '300%', value: 300 },
+  ];
   readonly isPanActive = computed(
     () => this.spacePanningActive() || this.interactionMode() === 'pan',
   );
@@ -292,6 +309,43 @@ export class WorkspaceComponent {
       this.currentAdapter?.redo();
     });
     queueMicrotask(() => this.syncUndoRedoState());
+  }
+
+  onZoomIn(): void {
+    if (!this.isActiveTabWorkspace() || !this.canZoomIn()) {
+      return;
+    }
+    this.viewportService.zoom(1.1);
+  }
+
+  onZoomOut(): void {
+    if (!this.isActiveTabWorkspace() || !this.canZoomOut()) {
+      return;
+    }
+    this.viewportService.zoom(1 / 1.1);
+  }
+
+  onZoomPercentChange(value: number | string | null | undefined): void {
+    if (!this.isActiveTabWorkspace()) {
+      return;
+    }
+    const nextPercent = Number(value);
+    if (!Number.isFinite(nextPercent) || nextPercent <= 0) {
+      return;
+    }
+    const currentScale = this.viewportService.scale();
+    if (!Number.isFinite(currentScale) || currentScale <= 0) {
+      return;
+    }
+    const targetScale = Math.min(
+      this.viewportService.maxZoom,
+      Math.max(this.viewportService.minZoom, nextPercent / 100),
+    );
+    const factor = targetScale / currentScale;
+    if (!Number.isFinite(factor) || factor === 1) {
+      return;
+    }
+    this.viewportService.zoom(factor);
   }
 
   @HostListener('window:keydown', ['$event'])
