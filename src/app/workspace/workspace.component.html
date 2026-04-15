@@ -1,23 +1,23 @@
 <div class="workspace" [class.workspace--space-panning]="isPanActive()">
   <p-card
-    header="Shapes"
-    subheader="Drag onto canvas"
+    [header]="'workspace.shapes' | translate"
+    [subheader]="'workspace.dragOntoCanvas' | translate"
     styleClass="workspace__card workspace__card--palette"
   >
     <div class="workspace__palette-scroll">
       <div class="workspace__palette-list">
-        @for (paletteItem of paletteModel; track paletteItem.data?.['label'] || $index) {
+        @for (paletteItem of paletteModel(); track paletteTrackBy(paletteItem, $index)) {
           <ng-diagram-palette-item [item]="paletteItem" class="workspace__palette-host">
             <div class="workspace__palette-item">
               <span class="workspace__palette-item-icon" aria-hidden="true">
-                <i [class]="paletteIconClass(paletteItem.data['label'])"></i>
+                <i [class]="paletteItemIcon(paletteItem)"></i>
               </span>
               <span class="workspace__palette-item-label">{{ paletteItem.data['label'] }}</span>
             </div>
             <ng-diagram-palette-item-preview>
               <div class="workspace__palette-item workspace__palette-item--preview">
                 <span class="workspace__palette-item-icon" aria-hidden="true">
-                  <i [class]="paletteIconClass(paletteItem.data['label'])"></i>
+                  <i [class]="paletteItemIcon(paletteItem)"></i>
                 </span>
                 <span class="workspace__palette-item-label">{{ paletteItem.data['label'] }}</span>
               </div>
@@ -32,8 +32,8 @@
     <p-toolbar styleClass="workspace__toolbar">
       <ng-template pTemplate="start">
         <div class="workspace__toolbar-heading">
-          <span class="workspace__toolbar-title">Canvas</span>
-          <span class="workspace__toolbar-hint">Space + drag to pan</span>
+          <span class="workspace__toolbar-title">{{ 'workspace.canvas' | translate }}</span>
+          <span class="workspace__toolbar-hint">{{ 'workspace.spaceDragPan' | translate }}</span>
         </div>
       </ng-template>
       <ng-template pTemplate="end">
@@ -45,9 +45,9 @@
             [outlined]="interactionMode() !== 'select'"
             [severity]="interactionMode() === 'select' ? 'primary' : 'secondary'"
             (onClick)="setInteractionMode('select')"
-            pTooltip="Select"
+            [pTooltip]="'workspace.select' | translate"
             tooltipPosition="top"
-            [attr.aria-label]="'Select'"
+            [attr.aria-label]="'workspace.select' | translate"
           >
             <span class="material-symbols-outlined workspace__mode-material-icon" aria-hidden="true"
               >arrow_selector_tool</span
@@ -61,9 +61,9 @@
             [outlined]="interactionMode() !== 'pan'"
             [severity]="interactionMode() === 'pan' ? 'primary' : 'secondary'"
             (onClick)="setInteractionMode('pan')"
-            pTooltip="Hand"
+            [pTooltip]="'workspace.hand' | translate"
             tooltipPosition="top"
-            [attr.aria-label]="'Hand'"
+            [attr.aria-label]="'workspace.hand' | translate"
           />
         </div>
       </ng-template>
@@ -76,9 +76,13 @@
     </div>
   </section>
 
-  <p-card header="Properties" subheader="Selection" styleClass="workspace__card workspace__card--sidebar">
+  <p-card
+    [header]="'workspace.properties' | translate"
+    [subheader]="'workspace.selection' | translate"
+    styleClass="workspace__card workspace__card--sidebar"
+  >
     <div class="workspace__form">
-      <label class="workspace__field-label" for="prop-node-id">Node ID</label>
+      <label class="workspace__field-label" for="prop-node-id">{{ 'workspace.nodeId' | translate }}</label>
       <input
         id="prop-node-id"
         pInputText
@@ -87,7 +91,7 @@
         readonly
       />
 
-      <label class="workspace__field-label" for="prop-label">Label</label>
+      <label class="workspace__field-label" for="prop-label">{{ 'workspace.label' | translate }}</label>
       <input
         id="prop-label"
         pInputText
@@ -96,24 +100,24 @@
         readonly
       />
 
-      <label class="workspace__field-label" for="prop-type">Type</label>
+      <label class="workspace__field-label" for="prop-type">{{ 'workspace.type' | translate }}</label>
       <p-select
         inputId="prop-type"
         styleClass="workspace__select"
-        [options]="typeOptions"
+        [options]="typeOptions()"
         [(ngModel)]="mockType"
         optionLabel="label"
         optionValue="value"
         [disabled]="true"
-        placeholder="Type"
+        [placeholder]="'workspace.type' | translate"
       />
 
       <p-divider styleClass="workspace__form-divider" />
 
-      <span class="workspace__field-label">Status</span>
+      <span class="workspace__field-label">{{ 'workspace.status' | translate }}</span>
       <div class="workspace__tags">
-        <p-tag value="Resizable" severity="secondary" [rounded]="true" />
-        <p-tag value="Rotatable" severity="secondary" [rounded]="true" />
+        <p-tag [value]="'workspace.resizable' | translate" severity="secondary" [rounded]="true" />
+        <p-tag [value]="'workspace.rotatable' | translate" severity="secondary" [rounded]="true" />
       </div>
     </div>
   </p-card>

@@ -42,9 +42,13 @@ export class AppComponent {
   readonly activePageIndex = this.diagramPages.activeIndex;
   readonly theme = this.preferences.themeState;
   readonly language = this.preferences.languageState;
-  readonly diagramName = computed(
-    () => this.diagramPages.activePage()?.name ?? '제목없는 다이어그램',
-  );
+  readonly diagramName = computed(() => {
+    this.language();
+    return (
+      this.diagramPages.activePage()?.name ??
+      this.translate.instant('workspace.defaultUntitledDiagram')
+    );
+  });
 
   readonly settingsMenuItems = computed((): MenuItem[] => {
     const tr = this.translate;

@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   HostListener,
+  computed as ngComputed,
   computed,
   effect,
   inject,
@@ -27,7 +28,9 @@ import { SelectModule } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
 import { ToolbarModule } from 'primeng/toolbar';
 import { TooltipModule } from 'primeng/tooltip';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
+import { AppPreferencesService } from '../app-preferences.service';
 import { DiagramPagesService } from '../diagram-pages.service';
 import { IndexedDbModelAdapter } from './indexeddb-model-adapter';
 
@@ -52,6 +55,7 @@ type DemoNodeData = {
     TagModule,
     DividerModule,
     TooltipModule,
+    TranslateModule,
   ],
   templateUrl: './workspace.component.html',
   styleUrl: './workspace.component.scss',
@@ -63,6 +67,8 @@ export class WorkspaceComponent {
   private viewportService = inject(NgDiagramViewportService);
   private selectionService = inject(NgDiagramSelectionService);
   private diagramPages = inject(DiagramPagesService);
+  private preferences = inject(AppPreferencesService);
+  private translate = inject(TranslateService);
   private spacePanningActive = signal(false);
   readonly isPanActive = computed(
     () => this.spacePanningActive() || this.interactionMode() === 'pan',
@@ -72,34 +78,79 @@ export class WorkspaceComponent {
     () => this.selectionService.selection().nodes[0] ?? null,
   );
   readonly selectedNodeLabel = computed(() => {
+    this.preferences.languageState();
     const data = this.selectedNode()?.data as DemoNodeData | undefined;
-    return data?.label ?? 'Unknown Node';
+    return data?.label ?? this.translate.instant('workspace.unknownNode');
   });
   readonly selectedNodeId = computed(() => this.selectedNode()?.id ?? '-');
 
-  readonly paletteModel: NgDiagramPaletteItem[] = [
-    { data: { label: 'Process' }, resizable: true, rotatable: true },
-    { data: { label: 'Decision' }, resizable: true, rotatable: true },
-    { data: { label: 'Start / End' }, resizable: true, rotatable: false },
-    { data: { label: 'Data' }, resizable: true, rotatable: true },
-  ];
+  readonly paletteModel = ngComputed<NgDiagramPaletteItem[]>(() => {
+    this.preferences.languageState();
+    const t = (key: string) => this.translate.instant(key);
+    return [
+      {
+        data: {
+          label: t('workspace.paletteProcess'),
+          icon: 'pi pi-square',
+          key: 'process',
+        },
+        resizable: true,
+        rotatable: true,
+      },
+      {
+        data: {
+          label: t('workspace.paletteDecision'),
+          icon: 'pi pi-share-alt',
+          key: 'decision',
+        },
+        resizable: true,
+        rotatable: true,
+      },
+      {
+        data: {
+          label: t('workspace.paletteStartEnd'),
+          icon: 'pi pi-circle',
+          key: 'startEnd',
+        },
+        resizable: true,
+        rotatable: false,
+      },
+      {
+        data: {
+          label: t('workspace.paletteData'),
+          icon: 'pi pi-database',
+          key: 'data',
+        },
+        resizable: true,
+        rotatable: true,
+      },
+    ];
+  });
 
-  readonly typeOptions = [{ label: 'Process', value: 'process' }];
+  readonly typeOptions = ngComputed(() => {
+    this.preferences.languageState();
+    return [
+      {
+        label: this.translate.instant('workspace.paletteProcess'),
+        value: 'process',
+      },
+    ];
+  });
   mockType = 'process';
 
   /** 팔레트 행 아이콘 (PrimeIcons) */
-  paletteIconClass(label: string): string {
-    const key = label.trim().toLowerCase();
-    if (key.includes('decision')) {
-      return 'pi pi-share-alt';
-    }
-    if (key.includes('start') || key.includes('end')) {
-      return 'pi pi-circle';
-    }
-    if (key.includes('data')) {
-      return 'pi pi-database';
-    }
-    return 'pi pi-square';
+  paletteIconClass(icon?: string): string {
+    return icon ?? 'pi pi-square';
+  }
+
+  paletteTrackBy(item: NgDiagramPaletteItem, index: number): string | number {
+    const data = item.data as { key?: string } | undefined;
+    return data?.key ?? index;
+  }
+
+  paletteItemIcon(item: NgDiagramPaletteItem): string {
+    const data = item.data as { icon?: string } | undefined;
+    return this.paletteIconClass(data?.icon);
   }
 
   config: NgDiagramConfig = {

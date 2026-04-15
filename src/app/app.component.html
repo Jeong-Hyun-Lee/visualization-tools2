@@ -3,7 +3,7 @@
     <div class="app-chrome__top">
       <div class="app-chrome__brand">
         <div class="app-chrome__titles">
-          <span class="app-chrome__eyebrow">Node Editor</span>
+          <span class="app-chrome__eyebrow">{{ 'app.brandChip' | translate }}</span>
           <h1 class="app-chrome__title">{{ diagramName() }}</h1>
         </div>
       </div>
@@ -40,8 +40,8 @@
         severity="primary"
         styleClass="app-chrome__add-tab"
         (onClick)="onAddPage()"
-        [attr.aria-label]="'새 다이어그램 추가'"
-        pTooltip="새 다이어그램"
+        [attr.aria-label]="'app.newDiagram' | translate"
+        [pTooltip]="'app.newDiagramTooltip' | translate"
         tooltipPosition="bottom"
       />
       <div class="app-chrome__tabs-wrap">
@@ -61,7 +61,7 @@
                     type="button"
                     class="app-pagebar__tab-close-btn"
                     (click)="onClosePage(idx, $event)"
-                    [attr.aria-label]="page.name + ' 탭 닫기'"
+                    [attr.aria-label]="('nodeEditor.closeTabAria' | translate) + ': ' + page.name"
                   >
                     <i class="pi pi-times app-pagebar__tab-close" aria-hidden="true"></i>
                   </button>

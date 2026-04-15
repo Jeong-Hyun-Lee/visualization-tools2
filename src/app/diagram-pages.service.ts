@@ -13,7 +13,14 @@ export type DiagramPage = {
   storageKey: string;
 };
 
-const UNTITLED_NAME = '제목없는 다이어그램';
+const UNTITLED_NAME_KO = '제목없는 다이어그램';
+const UNTITLED_NAME_EN = 'Untitled diagram';
+
+function getUntitledName(): string {
+  return localStorage.getItem('ge-vernova-lang') === 'en'
+    ? UNTITLED_NAME_EN
+    : UNTITLED_NAME_KO;
+}
 
 @Injectable({ providedIn: 'root' })
 export class DiagramPagesService {
@@ -80,9 +87,10 @@ export class DiagramPagesService {
 
   private createPage(index: number): DiagramPage {
     const id = crypto.randomUUID();
+    const untitled = getUntitledName();
     return {
       id,
-      name: index <= 1 ? UNTITLED_NAME : `${UNTITLED_NAME} ${index}`,
+      name: index <= 1 ? untitled : `${untitled} ${index}`,
       storageKey: `diagram-${id}`,
     };
   }
@@ -145,6 +153,7 @@ export class DiagramPagesService {
     const pages = session.tabs.map((tab, idx) => {
       const id = tab.diagramId || crypto.randomUUID();
       const storageKey = id;
+      const untitled = getUntitledName();
 
       const graph = this.toModelChanges(tab.payload?.graph);
       if (graph) {
@@ -155,7 +164,7 @@ export class DiagramPagesService {
         id,
         name:
           tab.diagramName?.trim() ||
-          (idx === 0 ? UNTITLED_NAME : `${UNTITLED_NAME} ${idx + 1}`),
+          (idx === 0 ? untitled : `${untitled} ${idx + 1}`),
         storageKey,
       };
     });
