@@ -272,6 +272,7 @@
 .workspace__canvas {
   flex: 1;
   min-height: 0;
+  position: relative;
   background: color-mix(in srgb, var(--p-surface-ground) 28%, var(--p-content-background));
 }
 

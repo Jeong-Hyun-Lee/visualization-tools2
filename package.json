@@ -1,6 +1,8 @@
 {
   "name": "ge-vernova",
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "description": "GE Vernova Node Editor desktop application",
+  "author": "GE Vernova",
   "main": "electron/main.js",
   "scripts": {
     "ng": "ng",
@@ -31,9 +33,9 @@
     "@angular/platform-browser": "21.2.8",
     "@angular/platform-browser-dynamic": "21.2.8",
     "@angular/router": "21.2.8",
-    "@primeuix/themes": "2.0.3",
     "@ngx-translate/core": "^14.0.0",
     "@ngx-translate/http-loader": "^7.0.0",
+    "@primeuix/themes": "2.0.3",
     "ng-diagram": "^1.1.2",
     "primeicons": "^7.0.0",
     "primeng": "21.1.6",
@@ -51,28 +53,35 @@
     "@types/mousetrap": "^1.6.15",
     "@types/node": "^22.18.9",
     "electron": "^41.1.0",
-    "electron-builder": "^23.6.0",
+    "electron-builder": "^26.8.1",
     "jsdom": "^29.0.2",
+    "png-to-ico": "^3.0.1",
+    "pngjs": "^7.0.0",
     "typescript": "~5.9.3",
     "vitest": "^4.1.4"
   },
   "build": {
     "appId": "com.ge.vernova.nodeeditor",
     "productName": "GE Vernova Node Editor",
+    "asar": true,
+    "icon": "build/icon.ico",
     "files": [
       "dist/**/*",
       "electron/**/*",
       "package.json"
+    ],
+    "extraResources": [
+      "build/icon.ico"
     ],
     "directories": {
       "output": "release"
     },
     "nsis": {
       "perMachine": true,
-      "allowElevation": true,
-      "include": "build/installer.nsh"
+      "allowElevation": true
     },
     "win": {
+      "icon": "build/icon.ico",
       "target": [
         "nsis"
       ]

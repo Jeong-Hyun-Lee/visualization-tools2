@@ -3,13 +3,36 @@ const path = require('path');
 const fs = require('fs');
 
 function resolveIndexPath() {
-  const distIndex = path.join(__dirname, '..', 'dist', 'ng-vernova', 'index.html');
-  if (fs.existsSync(distIndex)) {
-    return distIndex;
+  const candidates = [
+    path.join(__dirname, '..', 'dist', 'ng-vernova', 'index.html'),
+    // Angular output can be nested under browser/ depending on builder.
+    path.join(__dirname, '..', 'dist', 'ng-vernova', 'browser', 'index.html'),
+  ];
+
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
   }
+
   throw new Error(
-    'Angular build output not found. Run "npm run build" first.',
+    'Angular build output not found. Run "npm run build:electron" first.',
   );
+}
+
+function resolveWindowIconPath() {
+  const candidates = [
+    path.join(__dirname, '..', 'build', 'icon.ico'),
+    path.join(process.resourcesPath, 'icon.ico'),
+  ];
+
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
+  }
+
+  return undefined;
 }
 
 function createWindow() {
@@ -19,6 +42,7 @@ function createWindow() {
     minWidth: 1100,
     minHeight: 700,
     autoHideMenuBar: true,
+    icon: resolveWindowIconPath(),
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,

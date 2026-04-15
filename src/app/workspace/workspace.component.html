@@ -6,20 +6,32 @@
   >
     <div class="workspace__palette-scroll">
       <div class="workspace__palette-list">
-        @for (paletteItem of paletteModel(); track paletteTrackBy(paletteItem, $index)) {
-          <ng-diagram-palette-item [item]="paletteItem" class="workspace__palette-host">
+        @for (
+          paletteItem of paletteModel();
+          track paletteTrackBy(paletteItem, $index)
+        ) {
+          <ng-diagram-palette-item
+            [item]="paletteItem"
+            class="workspace__palette-host"
+          >
             <div class="workspace__palette-item">
               <span class="workspace__palette-item-icon" aria-hidden="true">
                 <i [class]="paletteItemIcon(paletteItem)"></i>
               </span>
-              <span class="workspace__palette-item-label">{{ paletteItem.data['label'] }}</span>
+              <span class="workspace__palette-item-label">{{
+                paletteItem.data["label"]
+              }}</span>
             </div>
             <ng-diagram-palette-item-preview>
-              <div class="workspace__palette-item workspace__palette-item--preview">
+              <div
+                class="workspace__palette-item workspace__palette-item--preview"
+              >
                 <span class="workspace__palette-item-icon" aria-hidden="true">
                   <i [class]="paletteItemIcon(paletteItem)"></i>
                 </span>
-                <span class="workspace__palette-item-label">{{ paletteItem.data['label'] }}</span>
+                <span class="workspace__palette-item-label">{{
+                  paletteItem.data["label"]
+                }}</span>
               </div>
             </ng-diagram-palette-item-preview>
           </ng-diagram-palette-item>
@@ -32,8 +44,12 @@
     <p-toolbar styleClass="workspace__toolbar">
       <ng-template pTemplate="start">
         <div class="workspace__toolbar-heading">
-          <span class="workspace__toolbar-title">{{ 'workspace.canvas' | translate }}</span>
-          <span class="workspace__toolbar-hint">{{ 'workspace.spaceDragPan' | translate }}</span>
+          <span class="workspace__toolbar-title">{{
+            "workspace.canvas" | translate
+          }}</span>
+          <span class="workspace__toolbar-hint">{{
+            "workspace.spaceDragPan" | translate
+          }}</span>
         </div>
       </ng-template>
       <ng-template pTemplate="end">
@@ -73,19 +89,7 @@
             optionValue="value"
             [ariaLabel]="'workspace.zoomLevel' | translate"
           />
-          <p-button
-            type="button"
-            icon="pi pi-search-minus"
-            size="small"
-            styleClass="workspace__mode-btn workspace__zoom-btn"
-            severity="secondary"
-            [outlined]="true"
-            [disabled]="!canZoomOut()"
-            (onClick)="onZoomOut()"
-            [pTooltip]="'workspace.zoomOutTooltip' | translate"
-            tooltipPosition="top"
-            [attr.aria-label]="'workspace.zoomOut' | translate"
-          />
+
           <p-button
             type="button"
             icon="pi pi-search-plus"
@@ -99,19 +103,39 @@
             tooltipPosition="top"
             [attr.aria-label]="'workspace.zoomIn' | translate"
           />
-          <p-divider layout="vertical" styleClass="workspace__toolbar-divider" />
+          <p-button
+            type="button"
+            icon="pi pi-search-minus"
+            size="small"
+            styleClass="workspace__mode-btn workspace__zoom-btn"
+            severity="secondary"
+            [outlined]="true"
+            [disabled]="!canZoomOut()"
+            (onClick)="onZoomOut()"
+            [pTooltip]="'workspace.zoomOutTooltip' | translate"
+            tooltipPosition="top"
+            [attr.aria-label]="'workspace.zoomOut' | translate"
+          />
+          <p-divider
+            layout="vertical"
+            styleClass="workspace__toolbar-divider"
+          />
           <p-button
             type="button"
             size="small"
             styleClass="workspace__mode-btn workspace__mode-btn--select"
             [outlined]="interactionMode() !== 'select'"
-            [severity]="interactionMode() === 'select' ? 'primary' : 'secondary'"
+            [severity]="
+              interactionMode() === 'select' ? 'primary' : 'secondary'
+            "
             (onClick)="setInteractionMode('select')"
             [pTooltip]="'workspace.select' | translate"
             tooltipPosition="top"
             [attr.aria-label]="'workspace.select' | translate"
           >
-            <span class="material-symbols-outlined workspace__mode-material-icon" aria-hidden="true"
+            <span
+              class="material-symbols-outlined workspace__mode-material-icon"
+              aria-hidden="true"
               >arrow_selector_tool</span
             >
           </p-button>
@@ -135,6 +159,12 @@
       <ng-diagram [model]="model" [config]="config" class="diagram">
         <ng-diagram-background />
       </ng-diagram>
+      <ng-diagram-minimap
+        position="bottom-right"
+        [showZoomControls]="false"
+        [width]="180"
+        [height]="120"
+      />
     </div>
   </section>
 
@@ -144,7 +174,9 @@
     styleClass="workspace__card workspace__card--sidebar"
   >
     <div class="workspace__form">
-      <label class="workspace__field-label" for="prop-node-id">{{ 'workspace.nodeId' | translate }}</label>
+      <label class="workspace__field-label" for="prop-node-id">{{
+        "workspace.nodeId" | translate
+      }}</label>
       <input
         id="prop-node-id"
         pInputText
@@ -153,7 +185,9 @@
         readonly
       />
 
-      <label class="workspace__field-label" for="prop-label">{{ 'workspace.label' | translate }}</label>
+      <label class="workspace__field-label" for="prop-label">{{
+        "workspace.label" | translate
+      }}</label>
       <input
         id="prop-label"
         pInputText
@@ -162,7 +196,9 @@
         readonly
       />
 
-      <label class="workspace__field-label" for="prop-type">{{ 'workspace.type' | translate }}</label>
+      <label class="workspace__field-label" for="prop-type">{{
+        "workspace.type" | translate
+      }}</label>
       <p-select
         inputId="prop-type"
         styleClass="workspace__select"
@@ -176,10 +212,20 @@
 
       <p-divider styleClass="workspace__form-divider" />
 
-      <span class="workspace__field-label">{{ 'workspace.status' | translate }}</span>
+      <span class="workspace__field-label">{{
+        "workspace.status" | translate
+      }}</span>
       <div class="workspace__tags">
-        <p-tag [value]="'workspace.resizable' | translate" severity="secondary" [rounded]="true" />
-        <p-tag [value]="'workspace.rotatable' | translate" severity="secondary" [rounded]="true" />
+        <p-tag
+          [value]="'workspace.resizable' | translate"
+          severity="secondary"
+          [rounded]="true"
+        />
+        <p-tag
+          [value]="'workspace.rotatable' | translate"
+          severity="secondary"
+          [rounded]="true"
+        />
       </div>
     </div>
   </p-card>
