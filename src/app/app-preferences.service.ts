@@ -47,7 +47,20 @@ export class AppPreferencesService {
   }
 
   private readStoredTheme(): AppTheme {
-    return localStorage.getItem(THEME_KEY) === 'dark' ? 'dark' : 'light';
+    const stored = localStorage.getItem(THEME_KEY);
+    if (stored === 'dark' || stored === 'light') {
+      return stored;
+    }
+
+    if (
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+    ) {
+      return 'dark';
+    }
+
+    return 'light';
   }
 
   private readStoredLanguage(): AppLanguage {
@@ -56,6 +69,7 @@ export class AppPreferencesService {
 
   private applyTheme(theme: AppTheme): void {
     const isDark = theme === 'dark';
+    document.documentElement.classList.toggle('theme-dark', isDark);
     document.body.classList.toggle('theme-dark', isDark);
     document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
   }

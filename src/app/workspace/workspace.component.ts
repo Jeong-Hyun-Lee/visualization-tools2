@@ -32,6 +32,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { AppPreferencesService } from '../app-preferences.service';
 import { DiagramPagesService } from '../diagram-pages.service';
+import { I18nRefreshService } from '../i18n-refresh.service';
 import { IndexedDbModelAdapter } from './indexeddb-model-adapter';
 
 type DemoNodeData = {
@@ -69,6 +70,7 @@ export class WorkspaceComponent {
   private diagramPages = inject(DiagramPagesService);
   private preferences = inject(AppPreferencesService);
   private translate = inject(TranslateService);
+  private i18nRefresh = inject(I18nRefreshService);
   private spacePanningActive = signal(false);
   readonly isPanActive = computed(
     () => this.spacePanningActive() || this.interactionMode() === 'pan',
@@ -78,6 +80,7 @@ export class WorkspaceComponent {
     () => this.selectionService.selection().nodes[0] ?? null,
   );
   readonly selectedNodeLabel = computed(() => {
+    this.i18nRefresh.revision();
     this.preferences.languageState();
     const data = this.selectedNode()?.data as DemoNodeData | undefined;
     return data?.label ?? this.translate.instant('workspace.unknownNode');
@@ -85,6 +88,7 @@ export class WorkspaceComponent {
   readonly selectedNodeId = computed(() => this.selectedNode()?.id ?? '-');
 
   readonly paletteModel = ngComputed<NgDiagramPaletteItem[]>(() => {
+    this.i18nRefresh.revision();
     this.preferences.languageState();
     const t = (key: string) => this.translate.instant(key);
     return [
@@ -128,6 +132,7 @@ export class WorkspaceComponent {
   });
 
   readonly typeOptions = ngComputed(() => {
+    this.i18nRefresh.revision();
     this.preferences.languageState();
     return [
       {

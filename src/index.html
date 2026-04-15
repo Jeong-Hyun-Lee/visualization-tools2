@@ -16,6 +16,33 @@
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0"
       rel="stylesheet"
     />
+    <script>
+      (() => {
+        try {
+          const key = 'ge-vernova-theme';
+          const stored = localStorage.getItem(key);
+          const isDark =
+            stored === 'dark' ||
+            (stored !== 'light' &&
+              window.matchMedia &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+          document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+          document.documentElement.classList.toggle('theme-dark', isDark);
+          if (document.body) {
+            document.body.classList.toggle('theme-dark', isDark);
+          } else if (isDark) {
+            document.addEventListener(
+              'DOMContentLoaded',
+              () => document.body.classList.add('theme-dark'),
+              { once: true },
+            );
+          }
+        } catch {
+          // ignore early theme bootstrap errors
+        }
+      })();
+    </script>
   </head>
   <body>
     <app-root></app-root>

@@ -4,6 +4,7 @@ import {
   HostListener,
   computed,
   effect,
+  inject,
 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -20,6 +21,7 @@ import {
   AppTheme,
 } from './app-preferences.service';
 import { DiagramPagesService } from './diagram-pages.service';
+import { I18nRefreshService } from './i18n-refresh.service';
 
 @Component({
   selector: 'app-root',
@@ -38,11 +40,14 @@ import { DiagramPagesService } from './diagram-pages.service';
   ],
 })
 export class AppComponent {
+  private readonly i18nRefresh = inject(I18nRefreshService);
+
   readonly pages = this.diagramPages.pages;
   readonly activePageIndex = this.diagramPages.activeIndex;
   readonly theme = this.preferences.themeState;
   readonly language = this.preferences.languageState;
   readonly diagramName = computed(() => {
+    this.i18nRefresh.revision();
     this.language();
     return (
       this.diagramPages.activePage()?.name ??
@@ -51,6 +56,7 @@ export class AppComponent {
   });
 
   readonly settingsMenuItems = computed((): MenuItem[] => {
+    this.i18nRefresh.revision();
     const tr = this.translate;
     const th = this.theme();
     const lang = this.language();
