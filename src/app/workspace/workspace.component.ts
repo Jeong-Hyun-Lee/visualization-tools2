@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import type { Model, NgDiagramConfig, NgDiagramPaletteItem } from 'ng-diagram';
+import type { NgDiagramConfig, NgDiagramPaletteItem } from 'ng-diagram';
 import {
   initializeModelAdapter,
   NgDiagramBackgroundComponent,
@@ -190,16 +190,12 @@ export class WorkspaceComponent {
     this.applyInteractionMode();
   }
 
-  private generateId(): string {
-    return crypto.randomUUID();
-  }
-
   private createModel(storageKey?: string) {
     const resolvedStorageKey = storageKey ?? 'ng-diagram-custom-demo';
     const initialState = this.diagramPages.getPageGraph(resolvedStorageKey);
     const adapter = new IndexedDbModelAdapter(
       resolvedStorageKey,
-      this.getDefaultModel(),
+      undefined,
       initialState,
     );
     adapter.onChange((data) => {
@@ -251,40 +247,5 @@ export class WorkspaceComponent {
       viewportPanningEnabled: panActive,
       nodeDraggingEnabled: !panActive,
     });
-  }
-
-  private getDefaultModel(): Model {
-    const nodeId1 = this.generateId();
-    const nodeId2 = this.generateId();
-
-    return {
-      nodes: [
-        {
-          id: nodeId1,
-          position: { x: 120, y: 120 },
-          data: { label: 'Node 1' },
-          resizable: true,
-          rotatable: true,
-        },
-        {
-          id: nodeId2,
-          position: { x: 580, y: 120 },
-          data: { label: 'Node 2' },
-          resizable: true,
-          rotatable: true,
-        },
-      ],
-      edges: [
-        {
-          id: this.generateId(),
-          source: nodeId1,
-          target: nodeId2,
-          sourcePort: 'port-right',
-          targetPort: 'port-left',
-          data: {},
-        },
-      ],
-      metadata: {},
-    };
   }
 }

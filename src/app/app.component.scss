@@ -167,42 +167,62 @@ body.theme-dark .app-main {
   box-shadow: 0 20px 48px -24px rgba(0, 0, 0, 0.5);
 }
 
-.app-pagebar__tab-group {
+.app-pagebar__diagram-list {
+  display: flex;
+  align-items: stretch;
   width: 100%;
-}
-
-.app-pagebar__tab-panels {
-  display: none;
-}
-
-:host ::ng-deep .app-pagebar__tab-group .p-tablist {
+  min-height: 2.35rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-gutter: stable;
   border-bottom: 1px solid var(--p-content-border-color);
   background: transparent;
   gap: 0;
 }
 
-:host ::ng-deep .app-pagebar__tab-group .p-tab {
+.app-pagebar__diagram-item {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  color: var(--p-text-muted-color);
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.app-pagebar__diagram-item--active {
+  border-bottom-color: var(--p-primary-color);
+  color: var(--p-primary-color);
+}
+
+.app-pagebar__diagram-select {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-width: 112px;
   min-height: 2.35rem;
   margin: 0;
-  border-radius: 0;
+  padding: 0 0.65rem;
   border: 0;
-  border-bottom: 2px solid transparent;
+  border-radius: 0;
   background: transparent;
-  color: var(--p-text-muted-color);
-  transition: border-color 0.15s ease;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: color 0.12s ease;
 }
 
-:host ::ng-deep .app-pagebar__tab-group .p-tablist-nav-button {
-  color: var(--p-text-muted-color);
-  border-radius: 0.5rem;
+.app-pagebar__diagram-select:hover {
+  color: var(--p-text-color);
 }
 
-:host ::ng-deep .app-pagebar__tab-group .p-tab-active {
-  border-bottom-color: var(--p-primary-color);
+.app-pagebar__diagram-item--active .app-pagebar__diagram-select:hover {
+  color: var(--p-primary-color);
 }
 
-:host ::ng-deep .app-pagebar__tab-label {
+.app-pagebar__tab-label {
   display: inline-flex;
   align-items: center;
   line-height: 1.2;
@@ -211,37 +231,29 @@ body.theme-dark .app-main {
   color: inherit;
 }
 
-:host ::ng-deep .app-pagebar__tab-close-btn {
+.app-pagebar__diagram-close {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.15rem;
-  height: 1.15rem;
-  margin-left: 0.3rem;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin: 0 0.35rem 0 0;
   padding: 0;
   border: 0;
   border-radius: 50%;
   background: transparent;
   color: inherit;
   cursor: pointer;
+  flex-shrink: 0;
   transition: background-color 0.12s ease;
 }
 
-:host ::ng-deep .app-pagebar__tab-close {
-  font-size: 0.62rem;
-  line-height: 0;
-  opacity: 0.85;
-}
-
-:host ::ng-deep .app-pagebar__tab-close-btn:hover {
+.app-pagebar__diagram-close:hover {
   background: color-mix(in srgb, var(--p-text-color) 12%, transparent);
 }
 
-:host ::ng-deep .app-pagebar__tab-group .p-tab-active .app-pagebar__tab-label,
-:host
-  ::ng-deep
-  .app-pagebar__tab-group
-  .p-tab-active
-  .app-pagebar__tab-close-btn {
-  color: var(--p-primary-color);
+.app-pagebar__tab-close {
+  font-size: 0.62rem;
+  line-height: 0;
+  opacity: 0.85;
 }

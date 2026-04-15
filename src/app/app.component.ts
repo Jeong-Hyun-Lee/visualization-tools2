@@ -1,7 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  HostListener,
+  DestroyRef,
+  DOCUMENT,
   computed,
   effect,
   inject,
@@ -12,7 +13,6 @@ import type { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { MenuModule } from 'primeng/menu';
-import { TabsModule } from 'primeng/tabs';
 import { TooltipModule } from 'primeng/tooltip';
 
 import {
@@ -35,12 +35,13 @@ import { I18nRefreshService } from './i18n-refresh.service';
     ButtonModule,
     DividerModule,
     MenuModule,
-    TabsModule,
     TooltipModule,
   ],
 })
 export class AppComponent {
   private readonly i18nRefresh = inject(I18nRefreshService);
+  private readonly document = inject(DOCUMENT);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly pages = this.diagramPages.pages;
   readonly activePageIndex = this.diagramPages.activeIndex;
@@ -105,6 +106,27 @@ export class AppComponent {
     effect(() => {
       this.translate.use(this.language());
     });
+
+    const saveShortcutHandler = (event: KeyboardEvent): void => {
+      if (event.repeat) {
+        return;
+      }
+      const isSave =
+        (event.ctrlKey || event.metaKey) &&
+        !event.altKey &&
+        !event.shiftKey &&
+        (event.code === 'KeyS' || event.key?.toLowerCase() === 's');
+      if (!isSave) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      void this.diagramPages.saveAllTabsToSession();
+    };
+    this.document.addEventListener('keydown', saveShortcutHandler, true);
+    this.destroyRef.onDestroy(() =>
+      this.document.removeEventListener('keydown', saveShortcutHandler, true),
+    );
   }
 
   onAddPage(): void {
@@ -138,15 +160,4 @@ export class AppComponent {
     this.diagramPages.removePageByIndex(index);
   }
 
-  @HostListener('window:keydown', ['$event'])
-  async onWindowSaveShortcut(event: KeyboardEvent): Promise<void> {
-    const isSaveShortcut =
-      (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's';
-    if (!isSaveShortcut) {
-      return;
-    }
-
-    event.preventDefault();
-    await this.diagramPages.saveAllTabsToSession();
-  }
 }
