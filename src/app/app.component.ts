@@ -8,11 +8,12 @@ import {
   inject,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import type { MenuItem } from 'primeng/api';
+import { MessageService, type MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { MenuModule } from 'primeng/menu';
 import { TabsModule } from 'primeng/tabs';
+import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
 
 import {
@@ -30,6 +31,7 @@ import { WorkspaceComponent } from './workspace/workspace.component';
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
+  providers: [MessageService],
   imports: [
     WorkspaceComponent,
     TranslateModule,
@@ -37,11 +39,13 @@ import { WorkspaceComponent } from './workspace/workspace.component';
     DividerModule,
     MenuModule,
     TabsModule,
+    ToastModule,
     TooltipModule,
   ],
 })
 export class AppComponent {
   private readonly i18nRefresh = inject(I18nRefreshService);
+  private readonly messageService = inject(MessageService);
   private readonly document = inject(DOCUMENT);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -115,7 +119,7 @@ export class AppComponent {
       }
       event.preventDefault();
       event.stopPropagation();
-      void this.diagramPages.saveAllTabsToSession();
+      void this.saveAllTabsWithToast();
     };
     this.document.addEventListener('keydown', saveShortcutHandler, true);
     this.destroyRef.onDestroy(() =>
@@ -166,6 +170,32 @@ export class AppComponent {
       maybeEvent.stopPropagation?.();
     }
     this.diagramPages.removePageByIndex(index);
+  }
+
+  private async saveAllTabsWithToast(): Promise<void> {
+    try {
+      await this.diagramPages.saveAllTabsToSession();
+      this.messageService.clear('save-toast');
+      this.messageService.add({
+        key: 'save-toast',
+        severity: 'success',
+        summary: this.translate.instant('workspace.save'),
+        detail: this.translate.instant('messages.saveTabsSuccess', {
+          count: this.pages().length,
+        }),
+        life: 2200,
+      });
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error);
+      this.messageService.clear('save-toast');
+      this.messageService.add({
+        key: 'save-toast',
+        severity: 'error',
+        summary: this.translate.instant('workspace.save'),
+        detail: this.translate.instant('messages.saveFailed', { detail }),
+        life: 3500,
+      });
+    }
   }
 
 }
