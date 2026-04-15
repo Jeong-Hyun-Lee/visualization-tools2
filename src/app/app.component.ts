@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, effect } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  computed,
+  effect,
+} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import type { MenuItem } from 'primeng/api';
@@ -120,5 +126,17 @@ export class AppComponent {
       maybeEvent.stopPropagation?.();
     }
     this.diagramPages.removePageByIndex(index);
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  async onWindowSaveShortcut(event: KeyboardEvent): Promise<void> {
+    const isSaveShortcut =
+      (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's';
+    if (!isSaveShortcut) {
+      return;
+    }
+
+    event.preventDefault();
+    await this.diagramPages.saveAllTabsToSession();
   }
 }

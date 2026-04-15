@@ -8,12 +8,11 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import type { Model, NgDiagramConfig, Node, NgDiagramPaletteItem } from 'ng-diagram';
+import type { Model, NgDiagramConfig, NgDiagramPaletteItem } from 'ng-diagram';
 import {
   initializeModelAdapter,
   NgDiagramBackgroundComponent,
   NgDiagramComponent,
-  NgDiagramModelService,
   NgDiagramPaletteItemComponent,
   NgDiagramPaletteItemPreviewComponent,
   NgDiagramSelectionService,
@@ -27,9 +26,10 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
 import { ToolbarModule } from 'primeng/toolbar';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { DiagramPagesService } from '../diagram-pages.service';
-import { LocalStorageModelAdapter } from './local-storage-model-adapter';
+import { IndexedDbModelAdapter } from './indexeddb-model-adapter';
 
 type DemoNodeData = {
   label: string;
@@ -51,6 +51,7 @@ type DemoNodeData = {
     SelectModule,
     TagModule,
     DividerModule,
+    TooltipModule,
   ],
   templateUrl: './workspace.component.html',
   styleUrl: './workspace.component.scss',
@@ -58,7 +59,6 @@ type DemoNodeData = {
 })
 export class WorkspaceComponent {
   readonly interactionMode = signal<'select' | 'pan'>('select');
-  private modelService = inject(NgDiagramModelService);
   private diagramService = inject(NgDiagramService);
   private viewportService = inject(NgDiagramViewportService);
   private selectionService = inject(NgDiagramSelectionService);
@@ -126,35 +126,6 @@ export class WorkspaceComponent {
     });
   }
 
-  async addNode() {
-    const existingNodes = this.modelService.nodes();
-    const newId = this.generateId();
-    const randomX = Math.floor(Math.random() * 540) + 120;
-    const randomY = Math.floor(Math.random() * 360) + 70;
-
-    const newNode: Node = {
-      id: newId,
-      position: { x: randomX, y: randomY },
-      data: { label: `Node ${existingNodes.length + 1}` },
-      resizable: true,
-      rotatable: true,
-    };
-
-    await this.diagramService.transaction(
-      () => {
-        this.modelService.addNodes([newNode]);
-      },
-      { waitForMeasurements: true },
-    );
-    this.viewportService.zoomToFit();
-  }
-
-  reset() {
-    if (window.confirm('Are you sure you want to reset the diagram?')) {
-      this.resetDiagramToDefault();
-    }
-  }
-
   setInteractionMode(mode: 'select' | 'pan'): void {
     if (this.interactionMode() === mode) {
       return;
@@ -163,34 +134,24 @@ export class WorkspaceComponent {
     this.applyInteractionMode();
   }
 
-  private async resetDiagramToDefault() {
-    const nodeIds = this.modelService.nodes().map((node) => node.id);
-    const edgeIds = this.modelService.edges().map((edge) => edge.id);
-    const defaultModel = this.getDefaultModel();
-
-    await this.diagramService.transaction(
-      () => {
-        this.modelService.deleteNodes(nodeIds);
-        this.modelService.deleteEdges(edgeIds);
-
-        this.modelService.addNodes(defaultModel.nodes);
-        this.modelService.addEdges(defaultModel.edges);
-      },
-      { waitForMeasurements: true },
-    );
-    this.viewportService.zoomToFit();
-  }
-
   private generateId(): string {
     return crypto.randomUUID();
   }
 
   private createModel(storageKey?: string) {
+    const resolvedStorageKey = storageKey ?? 'ng-diagram-custom-demo';
+    const initialState = this.diagramPages.getPageGraph(resolvedStorageKey);
+    const adapter = new IndexedDbModelAdapter(
+      resolvedStorageKey,
+      this.getDefaultModel(),
+      initialState,
+    );
+    adapter.onChange((data) => {
+      this.diagramPages.setPageGraph(resolvedStorageKey, data);
+    });
+
     return initializeModelAdapter(
-      new LocalStorageModelAdapter(
-        storageKey ?? 'ng-diagram-custom-demo',
-        this.getDefaultModel(),
-      ),
+      adapter,
     );
   }
 

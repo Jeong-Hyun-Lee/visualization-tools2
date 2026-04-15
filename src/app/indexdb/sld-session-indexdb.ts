@@ -23,6 +23,10 @@ const DB_VERSION = 1;
 const STORE_NAME = 'sessions';
 const CURRENT_KEY = 'current';
 
+function isIndexedDbAvailable(): boolean {
+  return typeof indexedDB !== 'undefined';
+}
+
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
@@ -50,6 +54,9 @@ function txDone(tx: IDBTransaction): Promise<void> {
 export async function saveCurrentSldSessionToIndexDB(
   session: SldSavedSession,
 ): Promise<void> {
+  if (!isIndexedDbAvailable()) {
+    return;
+  }
   const db = await openDb();
   const tx = db.transaction(STORE_NAME, 'readwrite');
   tx.objectStore(STORE_NAME).put(session, CURRENT_KEY);
@@ -57,20 +64,23 @@ export async function saveCurrentSldSessionToIndexDB(
   db.close();
 }
 
-export async function loadCurrentSldSessionFromIndexDB(): Promise<
-  SldSavedSession | null
-> {
+export async function loadCurrentSldSessionFromIndexDB(): Promise<SldSavedSession | null> {
+  if (!isIndexedDbAvailable()) {
+    return null;
+  }
   const db = await openDb();
   const tx = db.transaction(STORE_NAME, 'readonly');
   const req = tx.objectStore(STORE_NAME).get(CURRENT_KEY);
 
-  const result = await new Promise<SldSavedSession | null>((resolve, reject) => {
-    req.onsuccess = () => resolve((req.result as SldSavedSession | undefined) ?? null);
-    req.onerror = () => reject(req.error);
-  });
+  const result = await new Promise<SldSavedSession | null>(
+    (resolve, reject) => {
+      req.onsuccess = () =>
+        resolve((req.result as SldSavedSession | undefined) ?? null);
+      req.onerror = () => reject(req.error);
+    },
+  );
 
   await txDone(tx);
   db.close();
   return result;
 }
-

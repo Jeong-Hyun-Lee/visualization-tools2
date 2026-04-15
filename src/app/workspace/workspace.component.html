@@ -40,38 +40,30 @@
         <div class="workspace__toolbar-actions">
           <p-button
             type="button"
-            label="Select"
-            icon="pi pi-mouse-pointer"
             size="small"
+            styleClass="workspace__mode-btn workspace__mode-btn--select"
             [outlined]="interactionMode() !== 'select'"
             [severity]="interactionMode() === 'select' ? 'primary' : 'secondary'"
             (onClick)="setInteractionMode('select')"
-          />
+            pTooltip="Select"
+            tooltipPosition="top"
+            [attr.aria-label]="'Select'"
+          >
+            <span class="material-symbols-outlined workspace__mode-material-icon" aria-hidden="true"
+              >arrow_selector_tool</span
+            >
+          </p-button>
           <p-button
             type="button"
-            label="Hand"
             icon="pi pi-arrows-alt"
             size="small"
+            styleClass="workspace__mode-btn"
             [outlined]="interactionMode() !== 'pan'"
             [severity]="interactionMode() === 'pan' ? 'primary' : 'secondary'"
             (onClick)="setInteractionMode('pan')"
-          />
-          <p-divider layout="vertical" styleClass="workspace__toolbar-divider" />
-          <p-button
-            type="button"
-            label="Add node"
-            icon="pi pi-plus"
-            size="small"
-            (onClick)="addNode()"
-          />
-          <p-button
-            type="button"
-            label="Reset"
-            icon="pi pi-refresh"
-            size="small"
-            severity="danger"
-            [outlined]="true"
-            (onClick)="reset()"
+            pTooltip="Hand"
+            tooltipPosition="top"
+            [attr.aria-label]="'Hand'"
           />
         </div>
       </ng-template>
