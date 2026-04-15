@@ -4,7 +4,7 @@
     subheader="Drag onto canvas"
     styleClass="workspace__card workspace__card--palette"
   >
-    <p-scrollpanel styleClass="workspace__scroll workspace__scroll--palette">
+    <div class="workspace__palette-scroll">
       <div class="workspace__palette-list">
         @for (paletteItem of paletteModel; track paletteItem.data?.['label'] || $index) {
           <ng-diagram-palette-item [item]="paletteItem" class="workspace__palette-host">
@@ -25,7 +25,7 @@
           </ng-diagram-palette-item>
         }
       </div>
-    </p-scrollpanel>
+    </div>
   </p-card>
 
   <section class="workspace__center">

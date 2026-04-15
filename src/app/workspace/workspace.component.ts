@@ -24,7 +24,6 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DividerModule } from 'primeng/divider';
 import { InputTextModule } from 'primeng/inputtext';
-import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { SelectModule } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -52,7 +51,6 @@ type DemoNodeData = {
     SelectModule,
     TagModule,
     DividerModule,
-    ScrollPanelModule,
   ],
   templateUrl: './workspace.component.html',
   styleUrl: './workspace.component.scss',

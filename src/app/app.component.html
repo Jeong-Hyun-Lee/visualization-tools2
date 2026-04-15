@@ -50,32 +50,28 @@
           [value]="activePageIndex()"
           (valueChange)="onSelectPage($event)"
           [scrollable]="true"
+          [lazy]="true"
         >
           <p-tablist>
             @for (page of pages(); track page.id; let idx = $index) {
               <p-tab [value]="idx">
-                <span class="app-pagebar__chip-row">
-                  <span class="app-pagebar__chip-label">{{ page.name }}</span>
-                  @if (idx > 0) {
-                    <button
-                      type="button"
-                      class="app-pagebar__chip-close-btn"
-                      (click)="onClosePage(idx, $event)"
-                      [attr.aria-label]="page.name + ' 탭 닫기'"
-                    >
-                      <i
-                        class="pi pi-times app-pagebar__chip-close"
-                        aria-hidden="true"
-                      ></i>
-                    </button>
-                  }
-                </span>
+                <span class="app-pagebar__tab-label">{{ page.name }}</span>
+                @if (idx > 0) {
+                  <button
+                    type="button"
+                    class="app-pagebar__tab-close-btn"
+                    (click)="onClosePage(idx, $event)"
+                    [attr.aria-label]="page.name + ' 탭 닫기'"
+                  >
+                    <i class="pi pi-times app-pagebar__tab-close" aria-hidden="true"></i>
+                  </button>
+                }
               </p-tab>
             }
           </p-tablist>
           <p-tabpanels class="app-pagebar__tab-panels">
             @for (page of pages(); track page.id; let idx = $index) {
-              <p-tabpanel [value]="idx"></p-tabpanel>
+              <p-tabpanel [value]="idx" [lazy]="true"></p-tabpanel>
             }
           </p-tabpanels>
         </p-tabs>

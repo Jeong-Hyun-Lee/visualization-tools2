@@ -10,22 +10,25 @@ const UNTITLED_NAME = '제목없는 다이어그램';
 
 @Injectable({ providedIn: 'root' })
 export class DiagramPagesService {
-  private readonly pagesSignal = signal<DiagramPage[]>([
-    this.createPage(1),
-  ]);
-  private readonly activePageIdSignal = signal<string>(this.pagesSignal()[0].id);
+  private readonly pagesSignal = signal<DiagramPage[]>([this.createPage(1)]);
+  private readonly activePageIdSignal = signal<string>(
+    this.pagesSignal()[0].id,
+  );
 
   readonly pages = this.pagesSignal.asReadonly();
   readonly activePageId = this.activePageIdSignal.asReadonly();
   readonly activePage = computed(
     () =>
-      this.pagesSignal().find((page) => page.id === this.activePageIdSignal()) ??
-      this.pagesSignal()[0],
+      this.pagesSignal().find(
+        (page) => page.id === this.activePageIdSignal(),
+      ) ?? this.pagesSignal()[0],
   );
   readonly activeIndex = computed(() =>
     Math.max(
       0,
-      this.pagesSignal().findIndex((page) => page.id === this.activePageIdSignal()),
+      this.pagesSignal().findIndex(
+        (page) => page.id === this.activePageIdSignal(),
+      ),
     ),
   );
 
@@ -65,7 +68,7 @@ export class DiagramPagesService {
     const id = crypto.randomUUID();
     return {
       id,
-      name: UNTITLED_NAME,
+      name: `${UNTITLED_NAME} ${index}`,
       storageKey: `ng-diagram-custom-demo-${index}-${id.slice(0, 8)}`,
     };
   }
