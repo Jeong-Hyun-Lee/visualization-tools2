@@ -1,8 +1,6 @@
 <mat-toolbar class="app-toolbar" color="transparent">
   <div class="app-toolbar__brand">
-    <mat-icon class="app-toolbar__logo">bolt</mat-icon>
     <span class="brand">{{ diagramName() }}</span>
-    <span class="app-toolbar__chip">{{ "app.brandChip" | translate }}</span>
   </div>
   <span class="spacer"></span>
   <div class="app-toolbar__actions">
@@ -15,7 +13,6 @@
       [matTooltip]="'app.settings' | translate"
     >
       <mat-icon>settings</mat-icon>
-      {{ "app.settings" | translate }}
     </button>
     <mat-menu
       #settingsMenu="matMenu"
@@ -92,8 +89,32 @@
       mat-stretch-tabs="false"
       class="app-pagebar__tab-group"
     >
-      @for (page of pages(); track page.id) {
-        <mat-tab [label]="page.name"></mat-tab>
+      @for (page of pages(); track page.id; let idx = $index) {
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-chip-grid aria-label="다이어그램 탭">
+              <mat-chip-row
+                class="app-pagebar__chip-row"
+                [removable]="idx > 0"
+                (removed)="onClosePage(idx, $event)"
+              >
+                <span class="app-pagebar__chip-label">{{ page.name }}</span>
+                @if (idx > 0) {
+                  <button
+                    matChipRemove
+                    type="button"
+                    class="app-pagebar__chip-close-btn"
+                    [attr.aria-label]="page.name + ' 탭 닫기'"
+                  >
+                    <mat-icon class="app-pagebar__chip-close" aria-hidden="true"
+                      >close</mat-icon
+                    >
+                  </button>
+                }
+              </mat-chip-row>
+            </mat-chip-grid>
+          </ng-template>
+        </mat-tab>
       }
     </mat-tab-group>
   </div>

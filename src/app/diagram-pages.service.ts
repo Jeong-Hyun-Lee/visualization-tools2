@@ -41,6 +41,26 @@ export class DiagramPagesService {
     this.activePageIdSignal.set(page.id);
   }
 
+  removePageByIndex(index: number): void {
+    const pages = this.pagesSignal();
+    if (index <= 0 || index >= pages.length) {
+      return;
+    }
+
+    const pageToRemove = pages[index];
+    const nextPages = pages.filter((page) => page.id !== pageToRemove.id);
+    this.pagesSignal.set(nextPages);
+
+    const activePageId = this.activePageIdSignal();
+    if (activePageId === pageToRemove.id) {
+      const fallbackIndex = Math.min(index - 1, nextPages.length - 1);
+      const fallbackPage = nextPages[Math.max(0, fallbackIndex)];
+      if (fallbackPage) {
+        this.activePageIdSignal.set(fallbackPage.id);
+      }
+    }
+  }
+
   private createPage(index: number): DiagramPage {
     const id = crypto.randomUUID();
     return {

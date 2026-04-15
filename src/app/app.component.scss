@@ -3,6 +3,24 @@
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
+  --app-header-surface: #edf2fa;
+  --app-header-panel: #ffffff;
+  --app-header-border: #d9deea;
+  --app-header-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  --app-header-text: #0f172a;
+  --app-header-muted: #64748b;
+  --app-header-primary: #2563eb;
+  --app-header-control-bg: #f8fafc;
+  --app-header-control-hover: #e2e8f0;
+  --app-header-control-border: #cbd5e1;
+  --app-pagebar-bg: #f3f6fc;
+  --app-pagebar-tab-text: #64748b;
+  --app-pagebar-tab-active: #1d4ed8;
+  --app-pagebar-tab-chip-bg: #dbe2ea;
+  --app-pagebar-tab-chip-border: #8b95a5;
+  --app-pagebar-tab-chip-active-bg: #cfd7e2;
+  --app-pagebar-tab-chip-active-border: #6b7688;
+  --app-pagebar-tab-chip-active-text: #111827;
 }
 
 .spacer {
@@ -21,10 +39,12 @@ main {
   align-items: center;
   flex-shrink: 0;
   min-height: 64px;
-  padding: 0 1rem;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.22);
-  background: linear-gradient(180deg, #0f172a 0%, #131f34 100%);
-  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.35);
+  padding: 0.35rem 0.9rem;
+  margin: 0.5rem 0.5rem 0;
+  border: 1px solid var(--app-header-border);
+  border-radius: 12px;
+  background: var(--app-header-panel);
+  box-shadow: var(--app-header-shadow);
 }
 
 .app-toolbar__actions {
@@ -37,36 +57,38 @@ main {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  padding: 0 0.3rem;
 }
 
 .app-toolbar__logo {
-  color: #60a5fa;
+  color: var(--app-header-primary);
 }
 
 .brand {
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.01em;
-  color: #e2e8f0;
+  color: var(--app-header-text);
+  padding: 0.1rem 0.2rem;
 }
 
 .app-toolbar__chip {
   border-radius: 999px;
-  padding: 0.15rem 0.55rem;
+  padding: 0.22rem 0.6rem;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #dbeafe;
-  background: rgba(59, 130, 246, 0.2);
+  color: #1d4ed8;
+  background: #dbeafe;
 }
 
 .app-toolbar__action {
   border-radius: 10px;
-  height: 36px;
-  padding: 0 0.75rem;
+  height: 38px;
+  padding: 0 0.9rem;
   font-weight: 500;
-  color: #e2e8f0;
-  background: #1d2840;
-  border: 1px solid #32435f;
+  color: var(--app-header-text);
+  background: var(--app-header-control-bg);
+  border: 1px solid var(--app-header-control-border);
 }
 
 .app-toolbar__action mat-icon {
@@ -75,22 +97,7 @@ main {
 }
 
 .app-toolbar__action:hover {
-  background: #26324d;
-}
-
-.app-toolbar__action--new-diagram {
-  color: #eff6ff;
-  background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
-  border-color: #3b82f6;
-}
-
-.app-toolbar__action--new-diagram:hover {
-  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
-}
-
-.app-toolbar__action--new-diagram:focus-visible {
-  outline: 2px solid rgba(96, 165, 250, 0.45);
-  outline-offset: 2px;
+  background: var(--app-header-control-hover);
 }
 
 .app-pagebar {
@@ -99,28 +106,31 @@ main {
   gap: 0.25rem;
   height: 40px;
   flex-shrink: 0;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
-  background: #101a2c;
-  padding: 0 0.25rem;
+  margin: 0.4rem 0.5rem 0;
+  padding: 0.28rem;
+  border: 1px solid var(--app-header-border);
+  border-radius: 12px;
+  background: var(--app-pagebar-bg);
+  box-shadow: var(--app-header-shadow);
 }
 
 .app-pagebar__icon-btn {
-  width: 40px;
-  border: 1px solid #31425e;
+  width: 34px;
+  border: 1px solid var(--app-header-control-border);
   border-radius: 8px;
-  background: #152136;
-  color: #dbeafe;
+  background: var(--app-header-control-bg);
+  color: var(--app-header-muted);
   font-size: 1rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   margin: auto 0;
-  height: 30px;
+  height: 34px;
 }
 
 .app-pagebar__icon-btn:hover {
-  background: #233451;
+  background: var(--app-header-control-hover);
 }
 
 .app-pagebar__tabs {
@@ -138,25 +148,121 @@ main {
 }
 
 :host ::ng-deep .app-pagebar__tab-group .mat-mdc-tab {
-  min-width: 110px;
-  height: 40px;
+  min-width: 118px;
+  height: 34px;
   opacity: 1;
+  margin: 0.15rem 0.2rem;
+  border-radius: 12px;
+  border: 1px solid var(--app-pagebar-tab-chip-border);
+  background: var(--app-pagebar-tab-chip-bg);
 }
 
 :host ::ng-deep .app-pagebar__tab-group .mdc-tab__text-label {
-  color: #93a8c9;
-  font-size: 0.83rem;
+  color: #1f2937;
+  font-size: 0.8rem;
   font-weight: 600;
 }
 
-:host ::ng-deep .app-pagebar__tab-group .mdc-tab-indicator__content--underline {
-  border-color: #38bdf8 !important;
+:host ::ng-deep .app-pagebar__tab-group .mdc-tab-indicator {
+  display: none;
 }
 
 :host ::ng-deep .app-pagebar__tab-group .mdc-tab--active .mdc-tab__text-label {
-  color: #e0f2fe !important;
+  color: var(--app-pagebar-tab-chip-active-text) !important;
+}
+
+:host ::ng-deep .app-pagebar__tab-group .mat-mdc-tab.mdc-tab--active {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--app-pagebar-tab-chip-active-bg) 88%, white) 0%,
+    var(--app-pagebar-tab-chip-active-bg) 100%
+  );
+  border-color: var(--app-pagebar-tab-chip-active-border);
+  transform: translateY(-1px);
+  box-shadow:
+    0 8px 18px rgba(37, 99, 235, 0.22),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18);
 }
 
 :host ::ng-deep .app-pagebar__tab-group .mat-mdc-tab-header-pagination-chevron {
-  border-color: #93a8c9;
+  border-color: var(--app-pagebar-tab-text);
+}
+
+:host ::ng-deep .app-pagebar__chip-label {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
+:host ::ng-deep .app-pagebar__tab-group mat-chip-grid {
+  display: inline-flex;
+}
+
+:host ::ng-deep .app-pagebar__chip-row {
+  min-height: 24px;
+  padding: 0 0.15rem 0 0.35rem;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+:host ::ng-deep .app-pagebar__chip-close {
+  width: 14px;
+  height: 14px;
+  font-size: 14px;
+  margin-left: 0;
+  color: #374151;
+  opacity: 0.9;
+}
+
+:host ::ng-deep .app-pagebar__chip-close-btn {
+  border: 0;
+  margin-left: 0.35rem;
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+:host ::ng-deep .app-pagebar__chip-close-btn:hover {
+  background: rgba(2, 6, 23, 0.12);
+}
+
+:host-context(body.theme-dark) {
+  --app-header-surface: #0f141d;
+  --app-header-panel: #151d29;
+  --app-header-border: #263241;
+  --app-header-shadow: 0 16px 30px rgba(0, 0, 0, 0.35);
+  --app-header-text: #e2e8f0;
+  --app-header-muted: #9fb0c8;
+  --app-header-primary: #93c5fd;
+  --app-header-control-bg: #1a2431;
+  --app-header-control-hover: #273447;
+  --app-header-control-border: #33465d;
+  --app-pagebar-bg: #131c2b;
+  --app-pagebar-tab-text: #8ea0b9;
+  --app-pagebar-tab-active: #7dd3fc;
+  --app-pagebar-tab-chip-bg: #253244;
+  --app-pagebar-tab-chip-border: #4b5d78;
+  --app-pagebar-tab-chip-active-bg: #2f3f55;
+  --app-pagebar-tab-chip-active-border: #6d84a6;
+  --app-pagebar-tab-chip-active-text: #f1f5f9;
+}
+
+:host-context(body.theme-dark) .app-toolbar__chip {
+  color: #dbeafe;
+  background: rgba(96, 165, 250, 0.2);
+}
+
+:host-context(body.theme-dark) ::ng-deep .app-pagebar__tab-group .mdc-tab__text-label {
+  color: #dbe4f3;
+}
+
+:host-context(body.theme-dark) ::ng-deep .app-pagebar__chip-close {
+  color: #dbe4f3;
 }

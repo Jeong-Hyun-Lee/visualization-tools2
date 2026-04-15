@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -30,6 +31,7 @@ import { DiagramPagesService } from './diagram-pages.service';
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
+    MatChipsModule,
     MatMenuModule,
     MatTabsModule,
     MatDividerModule,
@@ -71,5 +73,17 @@ export class AppComponent {
 
   onSelectPage(index: number): void {
     this.diagramPages.selectPageByIndex(index);
+  }
+
+  onClosePage(index: number, event?: unknown): void {
+    if (event && typeof event === 'object') {
+      const maybeEvent = event as {
+        preventDefault?: () => void;
+        stopPropagation?: () => void;
+      };
+      maybeEvent.preventDefault?.();
+      maybeEvent.stopPropagation?.();
+    }
+    this.diagramPages.removePageByIndex(index);
   }
 }

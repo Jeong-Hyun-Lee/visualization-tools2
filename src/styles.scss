@@ -48,31 +48,6 @@ body.theme-dark {
   color: rgba(255, 255, 255, 0.9);
 }
 
-body.theme-dark app-root .app-toolbar {
-  background: linear-gradient(180deg, #2a2a2a 0%, #242424 100%);
-  border-bottom-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
-}
-
-body.theme-dark app-root .brand {
-  color: #f1f5f9;
-}
-
-body.theme-dark app-root .app-toolbar__chip {
-  color: #c7d2fe;
-  background: rgba(63, 81, 181, 0.35);
-}
-
-body.theme-dark app-root .app-toolbar__action {
-  color: #e2e8f0;
-  background: #3a3a42;
-  border-color: rgba(255, 255, 255, 0.12);
-}
-
-body.theme-dark app-root .app-toolbar__action:hover {
-  background: #4a4a52;
-}
-
 body.theme-dark .cdk-overlay-container .mat-mdc-select-panel {
   background: #424242;
 }
