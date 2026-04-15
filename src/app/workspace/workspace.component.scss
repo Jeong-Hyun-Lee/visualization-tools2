@@ -220,6 +220,29 @@
   padding: 0;
 }
 
+/* Undo/Redo는 비활성 상태에서도 식별 가능하도록 대비를 강화 */
+:host ::ng-deep .workspace__history-btn.p-button {
+  border-width: 1px;
+  border-color: var(--p-content-border-color);
+  background: var(--p-content-background);
+  color: var(--p-text-color);
+}
+
+:host ::ng-deep .workspace__history-btn.p-button:not(:disabled):hover {
+  border-color: color-mix(in srgb, var(--p-primary-color) 35%, var(--p-content-border-color));
+  color: var(--p-primary-color);
+}
+
+:host ::ng-deep .workspace__history-btn.p-button:disabled {
+  opacity: 0.62;
+  color: var(--p-text-muted-color);
+  background: color-mix(in srgb, var(--p-content-background) 88%, var(--p-surface-ground));
+}
+
+:host ::ng-deep .workspace__history-btn--redo .p-button-icon {
+  transform: scaleX(-1);
+}
+
 :host ::ng-deep .workspace__mode-btn--select .workspace__mode-material-icon {
   font-size: 1.08rem;
   line-height: 1;
@@ -233,6 +256,13 @@
 .workspace__canvas {
   flex: 1;
   min-height: 0;
+}
+
+/* 링크 드래그 중 임시 엣지 가시성 보강 */
+:host ::ng-deep ng-diagram-base-edge.default-edge.temporary {
+  --edge-stroke-opacity: 1;
+  --edge-stroke: var(--p-primary-color);
+  --edge-stroke-width: 2;
 }
 
 .diagram {

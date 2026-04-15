@@ -19,7 +19,9 @@ export type SldSavedSession = {
 };
 
 const DB_NAME = 'ge-vernova-sld-indexdb';
-const DB_VERSION = 1;
+// Keep this in sync with the highest existing schema version used in prior builds.
+// If this is lower than an already-created DB version, IndexedDB open() throws VersionError.
+const DB_VERSION = 2;
 const STORE_NAME = 'sessions';
 const CURRENT_KEY = 'current';
 

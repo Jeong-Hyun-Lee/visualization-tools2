@@ -40,6 +40,32 @@
         <div class="workspace__toolbar-actions">
           <p-button
             type="button"
+            icon="pi pi-undo"
+            size="small"
+            styleClass="workspace__mode-btn workspace__history-btn"
+            severity="secondary"
+            [outlined]="true"
+            [disabled]="!canUndo()"
+            (onClick)="onUndo()"
+            [pTooltip]="'workspace.undoTooltip' | translate"
+            tooltipPosition="top"
+            [attr.aria-label]="'workspace.undo' | translate"
+          />
+          <p-button
+            type="button"
+            icon="pi pi-replay"
+            size="small"
+            styleClass="workspace__mode-btn workspace__history-btn workspace__history-btn--redo"
+            severity="secondary"
+            [outlined]="true"
+            [disabled]="!canRedo()"
+            (onClick)="onRedo()"
+            [pTooltip]="'workspace.redoTooltip' | translate"
+            tooltipPosition="top"
+            [attr.aria-label]="'workspace.redo' | translate"
+          />
+          <p-button
+            type="button"
             size="small"
             styleClass="workspace__mode-btn workspace__mode-btn--select"
             [outlined]="interactionMode() !== 'select'"
