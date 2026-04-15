@@ -49,6 +49,15 @@ export class AppComponent {
   readonly activePageIndex = this.diagramPages.activeIndex;
   readonly theme = this.preferences.themeState;
   readonly language = this.preferences.languageState;
+  readonly themeToggleIcon = computed(() =>
+    this.theme() === 'dark' ? 'pi pi-sun' : 'pi pi-moon',
+  );
+  readonly themeToggleTooltip = computed(() => {
+    this.i18nRefresh.revision();
+    return this.theme() === 'dark'
+      ? this.translate.instant('app.light')
+      : this.translate.instant('app.dark');
+  });
   readonly diagramName = computed(() => {
     this.i18nRefresh.revision();
     this.language();
@@ -61,25 +70,8 @@ export class AppComponent {
   readonly settingsMenuItems = computed((): MenuItem[] => {
     this.i18nRefresh.revision();
     const tr = this.translate;
-    const th = this.theme();
     const lang = this.language();
     return [
-      {
-        label: tr.instant('app.theme'),
-        disabled: true,
-        styleClass: 'app-settings-menu__heading',
-      },
-      {
-        label: tr.instant('app.light'),
-        icon: th === 'light' ? 'pi pi-check' : undefined,
-        command: () => this.onThemeSelect('light'),
-      },
-      {
-        label: tr.instant('app.dark'),
-        icon: th === 'dark' ? 'pi pi-check' : undefined,
-        command: () => this.onThemeSelect('dark'),
-      },
-      { separator: true },
       {
         label: tr.instant('app.language'),
         disabled: true,
@@ -137,6 +129,10 @@ export class AppComponent {
 
   onThemeSelect(theme: AppTheme): void {
     this.preferences.setTheme(theme);
+  }
+
+  onToggleTheme(): void {
+    this.onThemeSelect(this.theme() === 'dark' ? 'light' : 'dark');
   }
 
   onLanguageSelect(lang: AppLanguage): void {

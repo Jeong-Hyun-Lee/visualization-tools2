@@ -13,7 +13,19 @@
       <div class="app-chrome__tools">
         <p-button
           type="button"
-          icon="pi pi-cog"
+          [icon]="themeToggleIcon()"
+          [rounded]="true"
+          [text]="true"
+          severity="secondary"
+          styleClass="app-chrome__icon-btn"
+          (onClick)="onToggleTheme()"
+          [attr.aria-label]="themeToggleTooltip()"
+          [pTooltip]="themeToggleTooltip()"
+          tooltipPosition="bottom"
+        />
+        <p-button
+          type="button"
+          icon="pi pi-language"
           [rounded]="true"
           [text]="true"
           severity="secondary"
