@@ -57,6 +57,23 @@ export class IndexedDbModelAdapter implements ModelAdapter {
     });
   }
 
+  /**
+   * nodes + edges 를 한 커밋으로 갱신 (정렬·일괄 이동 시 undo 스택 1회, 엣지 경로도 함께 반영).
+   */
+  updateNodesAndEdges(
+    fn: (ctx: { nodes: Node[]; edges: Edge[] }) => { nodes: Node[]; edges: Edge[] },
+  ): void {
+    const next = fn({
+      nodes: this.getNodes(),
+      edges: this.getEdges(),
+    });
+    this.commit({
+      ...this.state,
+      nodes: this.cloneData(next.nodes),
+      edges: this.cloneData(next.edges),
+    });
+  }
+
   updateEdges(next: Edge[] | ((prev: Edge[]) => Edge[])): void {
     const currentEdges = this.getEdges();
     const newEdges = typeof next === 'function' ? next(currentEdges) : next;

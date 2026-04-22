@@ -14,13 +14,14 @@ import {
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import type { NgDiagramConfig, NgDiagramPaletteItem } from 'ng-diagram';
+import type { NgDiagramConfig, NgDiagramPaletteItem, Node } from 'ng-diagram';
 import {
   configureShortcuts,
   initializeModelAdapter,
   NgDiagramBackgroundComponent,
   NgDiagramComponent,
   NgDiagramMinimapComponent,
+  NgDiagramNodeService,
   NgDiagramPaletteItemComponent,
   NgDiagramPaletteItemPreviewComponent,
   NgDiagramSelectionService,
@@ -78,6 +79,7 @@ export class WorkspaceComponent {
   readonly canUndo = signal(false);
   readonly canRedo = signal(false);
   private diagramService = inject(NgDiagramService);
+  private nodeService = inject(NgDiagramNodeService);
   private viewportService = inject(NgDiagramViewportService);
   private selectionService = inject(NgDiagramSelectionService);
   private diagramPages = inject(DiagramPagesService);
@@ -108,6 +110,12 @@ export class WorkspaceComponent {
   ];
   readonly isPanActive = computed(
     () => this.spacePanningActive() || this.interactionMode() === 'pan',
+  );
+
+  private readonly defaultNodeSize = { width: 160, height: 100 };
+
+  readonly canAlignSelection = computed(
+    () => this.selectionService.selection().nodes.length >= 2,
   );
 
   readonly selectedNode = computed(
@@ -348,6 +356,99 @@ export class WorkspaceComponent {
       return;
     }
     this.viewportService.zoom(factor);
+  }
+
+  /** 세로 기준선(선택 노드 가로 중심의 평균)에 맞춤 */
+  onAlignVertical(): void {
+    if (!this.isActiveTabWorkspace() || !this.canAlignSelection()) {
+      return;
+    }
+    const selected = this.selectionService.selection().nodes;
+    if (selected.length < 2) {
+      return;
+    }
+    const metrics = selected.map((node) => {
+      const { w } = this.getNodeSize(node);
+      return { id: node.id, cx: node.position.x + w / 2 };
+    });
+    const avgX = metrics.reduce((s, m) => s + m.cx, 0) / metrics.length;
+    const idSet = new Set(metrics.map((m) => m.id));
+
+    this.runAlignUpdate(idSet, (n) => {
+      const { w } = this.getNodeSize(n);
+      return { x: avgX - w / 2, y: n.position.y };
+    });
+  }
+
+  /** 가로 기준선(선택 노드 세로 중심의 평균)에 맞춤 */
+  onAlignHorizontal(): void {
+    if (!this.isActiveTabWorkspace() || !this.canAlignSelection()) {
+      return;
+    }
+    const selected = this.selectionService.selection().nodes;
+    if (selected.length < 2) {
+      return;
+    }
+    const metrics = selected.map((node) => {
+      const { h } = this.getNodeSize(node);
+      return { id: node.id, cy: node.position.y + h / 2 };
+    });
+    const avgY = metrics.reduce((s, m) => s + m.cy, 0) / metrics.length;
+    const idSet = new Set(metrics.map((m) => m.id));
+
+    this.runAlignUpdate(idSet, (n) => {
+      const { h } = this.getNodeSize(n);
+      return { x: n.position.x, y: avgY - h / 2 };
+    });
+  }
+
+  /**
+   * ModelAdapter.updateNodes()만 쓰면 flowCore 엣지 재계산이 안 도는 경우가 있어,
+   * 드래그와 동일하게 `moveNodesBy`(→ applyUpdate `moveNodesBy`)로 이동한다.
+   */
+  private runAlignUpdate(
+    movedIds: Set<string>,
+    buildTargetPosition: (n: Node) => { x: number; y: number },
+  ): void {
+    const selected = this.selectionService.selection().nodes.filter((n) =>
+      movedIds.has(n.id),
+    );
+    const moves = selected
+      .map((n) => {
+        const p = buildTargetPosition(n);
+        const delta = {
+          x: p.x - n.position.x,
+          y: p.y - n.position.y,
+        };
+        if (delta.x === 0 && delta.y === 0) {
+          return null;
+        }
+        return { node: n, delta };
+      })
+      .filter(
+        (m): m is { node: Node; delta: { x: number; y: number } } =>
+          m !== null,
+      );
+
+    if (moves.length === 0) {
+      return;
+    }
+
+    void this.diagramService
+      .transaction(async () => {
+        for (const { node, delta } of moves) {
+          await this.nodeService.moveNodesBy([node], delta);
+        }
+      })
+      .catch((err) => {
+        console.error('Align update failed', err);
+      });
+  }
+
+  private getNodeSize(node: Node): { w: number; h: number } {
+    const w = node.size?.width ?? this.defaultNodeSize.width;
+    const h = node.size?.height ?? this.defaultNodeSize.height;
+    return { w, h };
   }
 
   @HostListener('window:keydown', ['$event'])

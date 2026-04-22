@@ -259,7 +259,8 @@
   transform: scaleX(-1);
 }
 
-:host ::ng-deep .workspace__mode-btn--select .workspace__mode-material-icon {
+:host ::ng-deep .workspace__mode-btn--select .workspace__mode-material-icon,
+:host ::ng-deep .workspace__align-btn .workspace__mode-material-icon {
   font-size: 0.92rem;
   line-height: 1;
   font-variation-settings:
